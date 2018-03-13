@@ -1,1 +1,1 @@
-web: gunicorn kirjanpito:app
+web: gunicorn hello:app
