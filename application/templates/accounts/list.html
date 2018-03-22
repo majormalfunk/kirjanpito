@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+
+{% block body %}
+  <table>
+    <tr>
+      <th>Tili</th>
+      <th>Tilin nimi</th>
+      <th>K&auml;yt&ouml;ss&auml;</th>
+    </tr>
+    {% for account in accounts %}
+    <tr>
+      <td>{{ account.code }}</td>
+      <td>{{ account.name }}</td>
+      <td>
+        <form method="POST" action="{{ url_for('account_toggle_inuse', account_id=account.id) }}">
+            <input type="checkbox" name="inuse" value="True" {% if account.inuse %} checked {% endif %}/>
+            <input type="hidden" name="inuse" value="False"/>
+            <input type="submit" value="P&auml;ivit&auml;"/>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+{% endblock %}

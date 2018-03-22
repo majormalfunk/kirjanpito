@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+  
+{% block body %}
+<form method="POST" action="{{ url_for('accounts_create') }}">
+  <input type="number" name="code" min="1000" max="999999" required autofocus/>
+  <input type="text" name="name" maxlength="100" required/>
+  <input type="checkbox" name="inuse" value="True" checked/> K&auml;yt&ouml;ss&auml;<br>
+  <input type="submit" value="Lis&auml;&auml; tili"/>
+</form>
+{% endblock %}
