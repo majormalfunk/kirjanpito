@@ -13,6 +13,7 @@ Järjestelmässä on seuraavat käyttäjäroolit:
 
 Käyttötapauksista ja tietokantakuvauksesta puuttuu tositteiden hyväksyntä ja tarkastaminen.
 
+[Käyttötapaukset](https://github.com/majormalfunk/kirjanpito/blob/master/documentation/kayttotapaukset)
 [Tietokantakaavio](https://github.com/majormalfunk/kirjanpito/blob/master/documentation/Tietokantakaavio.png)
 
 [Sovellus Herokussa](https://kirjanpython.herokuapp.com)
