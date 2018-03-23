@@ -10,3 +10,6 @@ Järjestelmässä on seuraavat käyttäjäroolit:
 - kirjanpitäjä/rahastonhoitaja, joka tekee kirjaukset ja laatii tilinpäätöksen
 - hallituksen edustaja, joka hyväksyy kirjaukset
 - toiminnantarkastaja, joka tarkastaa kirjanpidon ja tilinpäätöksen.
+
+
+[Tietokantakaavio](https://github.com/majormalfunk/kirjanpito/blob/master/documentation/Tietokantakaavio.png)
