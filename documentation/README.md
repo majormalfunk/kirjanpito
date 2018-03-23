@@ -11,7 +11,7 @@ Järjestelmässä on seuraavat käyttäjäroolit:
 - hallituksen edustaja, joka hyväksyy kirjaukset
 - toiminnantarkastaja, joka tarkastaa kirjanpidon ja tilinpäätöksen.
 
-
+Käyttötapauksista ja tietokantakuvauksesta puuttuu tositteiden hyväksyntä ja tarkastaminen.
 
 [Tietokantakaavio](https://github.com/majormalfunk/kirjanpito/blob/master/documentation/Tietokantakaavio.png)
 
