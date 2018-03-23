@@ -12,4 +12,7 @@ Järjestelmässä on seuraavat käyttäjäroolit:
 - toiminnantarkastaja, joka tarkastaa kirjanpidon ja tilinpäätöksen.
 
 
+
 [Tietokantakaavio](https://github.com/majormalfunk/kirjanpito/blob/master/documentation/Tietokantakaavio.png)
+
+[Sovellus Herokussa](https://kirjanpython.herokuapp.com)
