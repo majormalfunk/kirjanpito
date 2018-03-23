@@ -6,18 +6,21 @@
       <th>Tili</th>
       <th>Tilin nimi</th>
       <th>K&auml;yt&ouml;ss&auml;</th>
+      <th></th>>
     </tr>
     {% for account in accounts %}
     <tr>
       <td>{{ account.code }}</td>
       <td>{{ account.name }}</td>
-      <td>
-        <form method="POST" action="{{ url_for('account_toggle_inuse', account_id=account.id) }}">
+      <form method="POST" action="{{ url_for('account_toggle_inuse', account_id=account.id) }}">
+        <td>
             <input type="checkbox" name="inuse" value="True" {% if account.inuse %} checked {% endif %}/>
             <input type="hidden" name="inuse" value="False"/>
+        </td>
+        <td>
             <input type="submit" value="P&auml;ivit&auml;"/>
-        </form>
-      </td>
+        </td>
+      </form>
     </tr>
     {% endfor %}
   </table>
