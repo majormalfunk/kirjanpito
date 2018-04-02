@@ -105,3 +105,5 @@ venv.bak/
 
 # Tämän sovelluksen tietokanta
 accounting.db
+
+.DS_Store
