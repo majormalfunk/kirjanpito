@@ -12,17 +12,8 @@ def accounts_index():
 def accounts_form():
     return render_template("accounts/new.html", form = AccountForm())
 
-@app.route("/accounts/<account_id>/", methods=["POST"])
-def account_toggle_inuse(account_id):
-
-    a = Account.query.get(account_id)
-    u = request.form.get("inuse") == "True" 
-    a.inuse = u
-    db.session().commit()
-  
-    return redirect(url_for("accounts_index"))
-
 @app.route("/accounts/select/<account_id>/", methods=["POST"])
+@login_required
 def account_select_for_edit(account_id):
 
     print("Valittu editoitavaksi " + account_id)
@@ -37,6 +28,7 @@ def account_select_for_edit(account_id):
     return render_template("accounts/edit.html", form = form, account_id = account_id, code = account.code)
 
 @app.route("/accounts/edit/<account_id>/", methods=["POST"])
+@login_required
 def accounts_edit(account_id):
 
     print("Yritetään tallentaa")
@@ -55,6 +47,7 @@ def accounts_edit(account_id):
     return redirect(url_for("accounts_index"))
 
 @app.route("/accounts/", methods=["POST"])
+@login_required
 def accounts_create():
     form = AccountForm(request.form)
 

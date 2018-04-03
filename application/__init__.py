@@ -4,10 +4,16 @@ app = Flask(__name__)
 
 # Tuodaan SQLAlchemy käyttöön
 from flask_sqlalchemy import SQLAlchemy
-# Käytetään accounting.db-nimistä SQLite-tietokantaa. Kolme vinoviivaa
-# kertoo, tiedosto sijaitsee tämän sovelluksen tiedostojen kanssa
-# samassa paikassa
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///accounting.db"
+
+import os
+
+if os.environ.get("HEROKU"):
+    # Käytetään HEROKUssa PostgreSQL:ää
+    app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
+else:
+    # Ja paikallisissa testeissä SQLiteä
+    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///accounting.db"
+
 # Pyydetään SQLAlchemyä tulostamaan kaikki SQL-kyselyt
 app.config["SQLALCHEMY_ECHO"] = True
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
@@ -41,4 +47,8 @@ def load_user(user_id):
     return UserAccount.query.get(user_id)
 
 # Luodaan lopulta tarvittavat tietokantataulut
-db.create_all()
+try:
+    db.create_all()
+except:
+    pass
+
