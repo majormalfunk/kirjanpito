@@ -8,9 +8,11 @@ class Account(db.Model):
 
     code = db.Column(db.Integer, nullable=False, unique=True)
     name = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.String(255), nullable=True)
     inuse = db.Column(db.Boolean, nullable=False)
 
-    def __init__(self, code, name, inuse):
+    def __init__(self, code, name, description, inuse):
         self.code = code
         self.name = name
+        self.description = description
         self.inuse = inuse
