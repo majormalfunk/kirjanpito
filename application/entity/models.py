@@ -1,21 +1,19 @@
 from application import db
 
-class Account(db.Model):
+class Entity(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
     date_modified = db.Column(db.DateTime, default=db.func.current_timestamp(),
     onupdate=db.func.current_timestamp())
 
-    code = db.Column(db.Integer, nullable=False, unique=True)
-    name = db.Column(db.String(100), nullable=False)
+    code = db.Column(db.String(9), nullable=True, unique=True)
+    name = db.Column(db.String(100), nullable=True)
     description = db.Column(db.String(255), nullable=True)
-    inuse = db.Column(db.Boolean, nullable=False)
 
-    entity_id = db.Column(db.Integer, db.ForeignKey('entity.id'), nullable = False)
+    user_accounts = db.relationship("UserAccount", backref='user_account', lazy=True)
+    accounts = db.relationship("Account", backref='account', lazy=True)
 
-    def __init__(self, code, name, description, inuse, entity_id):
+    def __init__(self, code, name, description):
         self.code = code
         self.name = name
         self.description = description
-        self.inuse = inuse
-        self.entity_id = entity_id

@@ -27,6 +27,9 @@ from application import views
 # Ja kansion application/accounts/ tiedostojen sisältö
 from application.accounts import models
 from application.accounts import views
+# Ja kansion application/entity/ tiedostojen sisältö
+from application.entity import models
+from application.entity import views
 
 # Kirjautuminen
 from application.auth import models

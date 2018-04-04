@@ -3,7 +3,7 @@ from wtforms import PasswordField, StringField
 from wtforms import validators
   
 class LoginForm(FlaskForm):
-    username = StringField("K&auml;tt&auml;j&auml;tunnus")
+    username = StringField("K&auml;ytt&auml;j&auml;tunnus")
     password = PasswordField("Salasana")
   
     class Meta:

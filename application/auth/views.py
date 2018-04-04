@@ -4,6 +4,7 @@ from flask_login import login_user, logout_user
 from application import app, db
 from application.auth.models import UserAccount
 from application.auth.forms import LoginForm, RegisterForm
+from application.entity.models import Entity
 
 #
 # Rekisteröityminen
@@ -27,7 +28,17 @@ def auth_register():
         return render_template("auth/registerform.html", form = form,
                                error = "Käyttäjätunnus " + varattu + " on jo käytössä")
 
-    newuser = UserAccount(username=form.username.data, password=form.password.data, name=form.name.data)
+    ## Luodaan yhteisö, jolle käyttäjä rekisteröidään
+
+    ent = Entity(code="", name="", description="")
+    db.session().add(ent)
+    db.session().commit()
+    
+    newuser = UserAccount(
+        username=form.username.data,
+        password=form.password.data,
+        name=form.name.data,
+        entity_id = ent.id)
     db.session().add(newuser)
     db.session().commit()
     print("Käyttäjä " + newuser.name + " rekisteröitiin")
@@ -40,12 +51,6 @@ def auth_register():
     login_user(user)
     return redirect(url_for("index"))
 
-
-    ##loginForm = LoginForm()
-    ##loginForm.username = newuser.username
-    ##loginForm.password = newuser.password
-
-    ##return redirect(url_for("accounts_index", form = loginForm))
 
 ##
 ## Kirjautuminen
