@@ -13,6 +13,7 @@
       </p>
     {% else %}
       <a href="{{ url_for('auth_login') }}">Kirjaudu</a>
+      <a href="{{ url_for('auth_register') }}">Rekister&ouml;idy</a>
     {% endif %}
     
     <a href="{{ url_for('accounts_index') }}">Tililuettelo</a>
