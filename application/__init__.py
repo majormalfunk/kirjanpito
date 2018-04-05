@@ -15,7 +15,7 @@ else:
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///accounting.db"
 
 # Pyydetään SQLAlchemyä tulostamaan kaikki SQL-kyselyt
-app.config["SQLALCHEMY_ECHO"] = True
+app.config["SQLALCHEMY_ECHO"] = False
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 # Luodaan db-olio, jota käytetään tietokannan käsittelyyn
