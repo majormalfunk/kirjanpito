@@ -6,7 +6,7 @@ class Entity(db.Model):
     date_modified = db.Column(db.DateTime, default=db.func.current_timestamp(),
     onupdate=db.func.current_timestamp())
 
-    code = db.Column(db.String(9), nullable=True, unique=True)
+    code = db.Column(db.String(9), nullable=True)
     name = db.Column(db.String(100), nullable=True)
     description = db.Column(db.String(255), nullable=True)
 

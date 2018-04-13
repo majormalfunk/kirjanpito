@@ -8,7 +8,7 @@ from application.accounts.forms import AccountForm, AccountEditForm
 @app.route("/accounts", methods=["GET"])
 def accounts_index():
     return render_template("accounts/list.html",
-    accounts = Account.query.filter(Account.entity_id == current_user.get_entity_id()).order_by(Account.code).all())
+    accounts = Account.query.filter(Account.entity_id == current_user.get_entity_id()).order_by(Account.number).all())
 
 @app.route("/accounts/new/")
 def accounts_form():
@@ -22,12 +22,11 @@ def account_select_for_edit(account_id):
 
     form = AccountEditForm()
     account = Account.query.get(account_id)
-    ##form.code.data = account.code
     form.name.data = account.name
     form.description.data = account.description
     form.inuse.data = account.inuse
 
-    return render_template("accounts/edit.html", form = form, account_id = account_id, code = account.code)
+    return render_template("accounts/edit.html", form = form, account_id = account_id, number = account.number)
 
 @app.route("/accounts/edit/<account_id>/", methods=["POST"])
 @login_required
@@ -72,7 +71,7 @@ def accounts_create():
     if not form.validate():
         return render_template("accounts/new.html", form = form)
 
-    a = Account(form.code.data, form.name.data, form.description.data, form.inuse.data, current_user.get_entity_id())
+    a = Account(form.number.data, form.name.data, form.description.data, form.inuse.data, current_user.get_entity_id())
     try:
         db.session().add(a)
         db.session().commit()

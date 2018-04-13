@@ -12,7 +12,7 @@
     {% for account in accounts %}
     <tr>
         <form method="POST" action="{{ url_for('account_select_for_edit', account_id=account.id) }}">
-        <td>{{ account.code }}</td>
+        <td>{{ account.number }}</td>
         <td>{{ account.name }}</td>
         <td>{{ account.description }}</td>
         <td>{% if account.inuse %} Kyll&auml; {% endif %}</td>
