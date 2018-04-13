@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+
+{% block body %}
+  <table>
+    <tr>
+      <th>Tiliryhm&auml;</th>
+      <th>Tiliryhm&auml;n nimi</th>
+      <th>Kuvaus</th>
+      <th>K&auml;yt&ouml;ss&auml;</th>
+      <th></th>
+      <th></th>
+    </tr>
+    {% for accountgroup in accountgroups %}
+    <tr>
+      <form method="POST" action="{{ url_for('accountgroup_select_for_edit', accountgroup_id=accountgroup.id) }}">
+        <td>{{ accountgroup.number }}</td>
+        <td>{{ accountgroup.name }}</td>
+        <td>{{ accountgroup.description }}</td>
+        <td>{% if accountgroup.inuse %} Kyll&auml; {% endif %}</td>
+        <td>
+            <input type="submit" value="Muuta"/>
+        </td>
+      </form>
+      <form method="POST" action="{{ url_for('accounts_form', accountgroup_id=accountgroup.id) }}">
+        <td>
+          <input type="submit" value="Lis&auml;&auml; tili"/>
+        </td>
+      </form>
+    </tr>
+    {% endfor %}
+  </table>
+{% endblock %}

@@ -6,6 +6,7 @@ class AccountForm(FlaskForm):
     number = IntegerField("Tilin numero", [validators.NumberRange(min=1000, max=9999, message="Sallittu 1000..9999")])
     name = StringField("Tilin nimi", [validators.Length(min=4, max=100, message="Pituus 4..100")])
     description = StringField("Kuvaus", [validators.Length(min=1, max=255, message="Pituus 1..255")])
+    accountgroup = IntegerField("Tiliryhm&auml;")
     inuse = BooleanField("K&auml;yt&ouml;ss&auml;")
  
     class Meta:
@@ -14,6 +15,7 @@ class AccountForm(FlaskForm):
 class AccountEditForm(FlaskForm):
     name = StringField("Tilin nimi", [validators.Length(min=4, max=100, message="Pituus 4..100")])
     description = StringField("Kuvaus", [validators.Length(min=1, max=255, message="Pituus 1..255")])
+    accountgroup = IntegerField("Tiliryhm&auml;")
     inuse = BooleanField("K&auml;yt&ouml;ss&auml;")
  
     class Meta:

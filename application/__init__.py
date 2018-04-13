@@ -24,6 +24,9 @@ db = SQLAlchemy(app)
 # Luetaan kansiosta application/ tiedostojen sisältö
 from application import views
 
+# Ja kansion application/accountgroups/ tiedostojen sisältö
+from application.accountgroups import models
+from application.accountgroups import views
 # Ja kansion application/accounts/ tiedostojen sisältö
 from application.accounts import models
 from application.accounts import views

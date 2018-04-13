@@ -1,21 +1,16 @@
 {% extends "layout.html" %}
   
 {% block body %}
-<form method="POST" action="{{ url_for('accounts_create', accountgroup_id=accountgroup.id) }}">
+<form method="POST" action="{{ url_for('accountgroups_edit', accountgroup_id=accountgroup_id) }}">
   <table>
     <tr>
       <td>
-        {{ form.number.label }}
+        Tiliryhm&auml;n numero
       </td>
       <td>
-        {{ form.number }}
+        {{ number }}
       </td>
       <td>
-        <ul>
-          {% for error in form.number.errors %}
-          <li>{{ error }}</li>
-          {% endfor %}
-        </ul>
       </td>
     </tr>
     <tr>
@@ -50,18 +45,6 @@
     </tr>
     <tr>
       <td>
-        {{ form.accountgroup.label }}
-        <input type="hidden" name="accountgroup_id" value="{{ accountgroup.id }}">
-      </td>
-      <td>
-          {{ accountgroup.number }} - {{ accountgroup.name }}
-      </td>
-      <td>
-
-      </td>
-    </tr>
-    <tr>
-      <td>
         {{ form.inuse.label }}
       </td>
       <td>
@@ -71,8 +54,13 @@
       </td>
     </tr>
     <tr>
-      <td colspan="3">
-        <input type="submit" value="Lis&auml;&auml; tili"/>
+      <td>
+          <input type="submit" name="action_delete" value="Poista"/>
+      </td>
+      <td>
+          <input type="submit" name="action_update" value="Tallenna"/>
+      </td>
+      <td>
       </td>
     </tr>
   </table>

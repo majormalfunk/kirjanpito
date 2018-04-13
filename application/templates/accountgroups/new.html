@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
   
 {% block body %}
-<form method="POST" action="{{ url_for('accounts_create', accountgroup_id=accountgroup.id) }}">
+<form method="POST" action="{{ url_for('accountgroups_create') }}">
   <table>
     <tr>
       <td>
@@ -50,18 +50,6 @@
     </tr>
     <tr>
       <td>
-        {{ form.accountgroup.label }}
-        <input type="hidden" name="accountgroup_id" value="{{ accountgroup.id }}">
-      </td>
-      <td>
-          {{ accountgroup.number }} - {{ accountgroup.name }}
-      </td>
-      <td>
-
-      </td>
-    </tr>
-    <tr>
-      <td>
         {{ form.inuse.label }}
       </td>
       <td>
@@ -72,7 +60,7 @@
     </tr>
     <tr>
       <td colspan="3">
-        <input type="submit" value="Lis&auml;&auml; tili"/>
+        <input type="submit" value="Lis&auml;&auml; tiliryhm&auml;"/>
       </td>
     </tr>
   </table>

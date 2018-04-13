@@ -3,16 +3,22 @@ from flask_login import login_required, current_user
 
 from application import app, db
 from application.accounts.models import Account
+from application.accountgroups.models import AccountGroup
 from application.accounts.forms import AccountForm, AccountEditForm
 
 @app.route("/accounts", methods=["GET"])
 def accounts_index():
+
     return render_template("accounts/list.html",
     accounts = Account.query.filter(Account.entity_id == current_user.get_entity_id()).order_by(Account.number).all())
 
-@app.route("/accounts/new/")
-def accounts_form():
-    return render_template("accounts/new.html", form = AccountForm())
+@app.route("/accounts/new/<accountgroup_id>/", methods=["GET", "POST"])
+def accounts_form(accountgroup_id):
+
+    accountgroup = AccountGroup.query.filter(AccountGroup.entity_id == current_user.get_entity_id(), AccountGroup.id == accountgroup_id).first()
+
+    return render_template("accounts/new.html", form = AccountForm(), accountgroup = accountgroup)
+    
 
 @app.route("/accounts/select/<account_id>/", methods=["POST"])
 @login_required
@@ -63,15 +69,16 @@ def accounts_edit(account_id):
 
     return redirect(url_for("accounts_index"))
 
-@app.route("/accounts/", methods=["POST"])
+@app.route("/accounts/<accountgroup_id>/", methods=["POST"])
 @login_required
-def accounts_create():
+def accounts_create(accountgroup_id):
     form = AccountForm(request.form)
 
     if not form.validate():
+        print("Validointi ei onnistunut accounts_create:ssa")
         return render_template("accounts/new.html", form = form)
 
-    a = Account(form.number.data, form.name.data, form.description.data, form.inuse.data, current_user.get_entity_id())
+    a = Account(form.number.data, form.name.data, form.description.data, form.inuse.data, accountgroup_id, current_user.get_entity_id())
     try:
         db.session().add(a)
         db.session().commit()
