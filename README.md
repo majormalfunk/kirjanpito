@@ -7,13 +7,13 @@ Järjestelmästä voi tulostaa kirjanpidon perusraportit kuten päiväkirjan, p�
 Järjestelmässä ei ole myyntilaskusta tai jäsenmaksulaskutusta eikä jäsenrekisteriä. Koska pienet yhdistykset ovat harvoin arvonlisäverovelvollisia, niin järjestelmässä ei ole myöskään alv-laskentaa.
 
 Järjestelmässä on seuraavat käyttäjäroolit:
-- kirjanpitäjä/rahastonhoitaja, joka tekee kirjaukset ja laatii tilinpäätöksen
+- kirjanpitäjä/rahastonhoitaja, joka tekee kirjaukset ja laatii tilinpäätöksen sekä toimii admin-roolissa
 - hallituksen edustaja, joka hyväksyy kirjaukset
-- toiminnantarkastaja, joka tarkastaa kirjanpidon ja tilinpäätöksen.
+- toiminnantarkastaja, joka voi tarkastella kirjanpitoa ja raportteja.
 
 Käyttötapauksista ja tietokantakuvauksesta puuttuu tositteiden hyväksyntä ja tarkastaminen.
 
 [Käyttötapaukset](https://github.com/majormalfunk/kirjanpito/blob/master/documentation/kayttotapaukset)
-[Tietokantakaavio](https://github.com/majormalfunk/kirjanpito/blob/master/documentation/Tietokantakaavio.png)
+[Tietokantakuvaus](https://github.com/majormalfunk/kirjanpito/blob/master/documentation/Tietokantakuvaus.md)
 
 [Sovellus Herokussa](https://kirjanpython.herokuapp.com)
