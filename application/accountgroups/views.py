@@ -41,6 +41,17 @@ def accountgroups_edit_account():
     editaccountid = editaccountid,
     editaccountnumber = editaccountnumber)
 
+@app.route("/accountgroups/newaccount", methods=["POST"])
+@login_required(role="admin")
+def accountgroups_new_account():
+
+    print("*** accountgroups_new_account ***")
+
+    return render_template("accountgroups/list.html",
+    accountgroups = AccountGroup.findAllGroupsAndAccounts(current_user.get_entity_id()),
+    newaccountgroupform = AccountGroupForm(),
+    newaccountform = AccountForm(request.form))
+
 @app.route("/accountgroups/new/")
 @login_required(role="admin")
 def accountgroups_form():
