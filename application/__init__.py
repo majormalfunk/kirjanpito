@@ -21,6 +21,45 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 # Luodaan db-olio, jota käytetään tietokannan käsittelyyn
 db = SQLAlchemy(app)
 
+# Kirjautuminen
+from os import urandom
+app.config["SECRET_KEY"] = urandom(32)
+
+# Tallennettavan salasanan hashaaminen
+import passlib
+
+from flask_login import LoginManager, current_user
+login_manager = LoginManager()
+login_manager.setup_app(app)
+
+login_manager.login_view = "auth_login"
+login_manager.login_message = "Sinun pitää kirjautua voidaksesi käyttää toiminnallisuutta"
+
+# roles in login_required
+from functools import wraps
+
+def login_required(role="any"):
+    def wrapper(fn):
+        @wraps(fn)
+        def decorated_view(*args, **kwargs):
+            if not current_user.is_authenticated:
+                return login_manager.unauthorized()
+            
+            unauthorized = False
+
+            if role != "any":
+                unauthorized = True
+                
+                if current_user.role == role:
+                    unauthorized = False
+
+            if unauthorized:
+                return login_manager.unauthorized()
+            
+            return fn(*args, **kwargs)
+        return decorated_view
+    return wrapper
+
 # Luetaan kansiosta application/ tiedostojen sisältö
 from application import views
 
@@ -34,19 +73,10 @@ from application.accounts import views
 from application.entity import models
 from application.entity import views
 
-# Kirjautuminen
 from application.auth import models
 from application.auth import views
 from application.auth.models import UserAccount
-from os import urandom
-app.config["SECRET_KEY"] = urandom(32)
 
-from flask_login import LoginManager
-login_manager = LoginManager()
-login_manager.setup_app(app)
-
-login_manager.login_view = "auth_login"
-login_manager.login_message = "Sinun pitää kirjautua voidaksesi käyttää toiminnallisuutta"
 
 @login_manager.user_loader
 def load_user(user_id):

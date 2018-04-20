@@ -9,44 +9,47 @@
   <body>
 
 
-      <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
-          <a class="navbar-brand" href="#">Kirjanpito</a>
-          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-                  <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarCollapse">
-                  <ul class="navbar-nav mr-auto">
-                    <li class="nav-item">
-                      <a class="nav-link" href="{{ url_for('entity_select_for_edit')}}">Yhteis&ouml;</a>
-                    </li>
-                    <li class="nav-item">
-                      <a class="nav-link" href="{{ url_for('accountgroups_index') }}">Tiliryhm&auml;t</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('accountgroups_form') }}">Lis&auml;&auml; tiliryhm&auml;</a>
-                      </li>
-                      <li class="nav-item">
-                          <a class="nav-link" href="{{ url_for('accounts_index') }}">Tilit</a>
-                        </li>
-                        </ul>
-                  <div class="form-inline mt-2 mt-md-0">
-              {% if current_user.is_authenticated %}
-              <a href="{{ url_for('auth_logout') }}">Hei {{ current_user.name }} -- Kirjaudu ulos</a>
-              {% else %}
-              <ul>
-                <li>
-              <a href="{{ url_for('auth_login') }}">Kirjaudu</a>
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
+      <a class="navbar-brand" href="#">Kirjanpito</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+          {% if current_user.is_authenticated %}
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('entity_select_for_edit')}}">Yhteis&ouml;</a>
             </li>
-            <li>
-              <a href="{{ url_for('auth_register') }}">Rekister&ouml;idy</a>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('accountgroups_index') }}">Tilit</a>
             </li>
+          </ul>
+          {% else %}
+          <ul class="navbar-nav mr-auto">
+              <li class="nav-item">
+              </li>
+              <li class="nav-item">
+              </li>
             </ul>
-              {% endif %}
-                  </div>
-          </div>
-      </nav>
+            {% endif %}
+        <div class="form-inline mt-2 mt-md-0">
+          {% if current_user.is_authenticated %}
+            <a href="{{ url_for('auth_logout') }}">Hei {{ current_user.name }} -- Kirjaudu ulos</a>
+          {% else %}
+            <ul>
+              <li>
+                <a href="{{ url_for('auth_login') }}">Kirjaudu</a>
+              </li>
+              <li>
+                <a href="{{ url_for('auth_register') }}">Rekister&ouml;idy</a>
+             </li>
+            </ul>
+          {% endif %}
+        </div>
+      </div>
+    </nav>
 
-      <main role="main" class="container">
+    <main role="main" class="container">
       {% block body %}
       <p>
         Content.

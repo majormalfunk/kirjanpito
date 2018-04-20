@@ -1,7 +1,7 @@
 from flask import redirect, render_template, request, url_for
-from flask_login import login_required, current_user
+from flask_login import current_user
 
-from application import app, db
+from application import app, db, login_required
 from application.entity.models import Entity
 from application.entity.forms import EntityForm, EntityEditForm
 
@@ -12,11 +12,12 @@ def entity_index():
     return render_template("entity/edit.html", entity = Entity.query.get(current_user.get_entity_id()))
 
 @app.route("/entity/new/")
+##@login_required(role="admin")
 def entity_form():
     return render_template("entity/new.html", form = EntityForm())
 
 @app.route("/entity/select/", methods=["GET","POST"])
-@login_required
+##@login_required(role="admin")
 def entity_select_for_edit():
 
     print("Valittu editoitavaksi " + str(current_user.get_entity_id()))
@@ -30,7 +31,7 @@ def entity_select_for_edit():
     return render_template("entity/edit.html", form = form)
 
 @app.route("/entity/edit/", methods=["POST"])
-@login_required
+##@login_required(role="admin")
 def entity_edit():
 
     print("Yritetään tallentaa")
@@ -49,7 +50,7 @@ def entity_edit():
     return redirect(url_for("entity_select_for_edit"))
 
 @app.route("/entity/", methods=["POST"])
-@login_required
+##@login_required(role="admin")
 def entity_create():
     form = EntityForm(request.form)
 

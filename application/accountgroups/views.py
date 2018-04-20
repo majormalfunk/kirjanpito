@@ -1,21 +1,53 @@
 from flask import redirect, render_template, request, url_for
-from flask_login import login_required, current_user
+from flask_login import current_user
 
-from application import app, db
+from application import app, db, login_required
 from application.accountgroups.models import AccountGroup
 from application.accountgroups.forms import AccountGroupForm, AccountGroupEditForm
+from application.accounts.models import Account
+from application.accounts.forms import AccountForm, AccountEditForm
 
-@app.route("/accountgroupss", methods=["GET"])
+@app.route("/accountgroups", methods=["GET"])
+@login_required(role="admin")
 def accountgroups_index():
+
+    print("*** accountgroups_index ***")
+
     return render_template("accountgroups/list.html",
-    accountgroups = AccountGroup.query.filter(AccountGroup.entity_id == current_user.get_entity_id()).order_by(AccountGroup.number).all())
+    accountgroups = AccountGroup.findAllGroupsAndAccounts(current_user.get_entity_id()),
+    newaccountgroupform = AccountGroupForm(),
+    newaccountform = AccountForm())
+
+@app.route("/accountgroups", methods=["POST"])
+@login_required(role="admin")
+def accountgroups_edit_account():
+
+    print("*** accountgroups_edit_account ***")
+
+    editaccountid = request.args.get("editAccountId")
+    editaccountnumber = request.args.get("editAccountNumber")
+    editaccountform = AccountEditForm()
+    account = Account.query.get(editaccountid)
+    editaccountform.name.data = account.name
+    editaccountform.description.data = account.description
+    editaccountform.inuse.data = account.inuse
+    editaccountform.accountgroup = account.accountgroup_id
+
+    return render_template("accountgroups/list.html",
+    accountgroups = AccountGroup.findAllGroupsAndAccounts(current_user.get_entity_id()),
+    newaccountgroupform = AccountGroupForm(),
+    newaccountform = AccountForm(),
+    editaccountform = editaccountform,
+    editaccountid = editaccountid,
+    editaccountnumber = editaccountnumber)
 
 @app.route("/accountgroups/new/")
+@login_required(role="admin")
 def accountgroups_form():
     return render_template("accountgroups/new.html", form = AccountGroupForm())
 
 @app.route("/accountgroups/select/<accountgroup_id>/", methods=["POST"])
-@login_required
+@login_required(role="admin")
 def accountgroup_select_for_edit(accountgroup_id):
 
     print("Valittu editoitavaksi tiliryhmä id = " + accountgroup_id)
@@ -29,7 +61,7 @@ def accountgroup_select_for_edit(accountgroup_id):
     return render_template("accountgroups/edit.html", form = form, accountgroup_id = accountgroup_id, number = accountgroup.number)
 
 @app.route("/accountgroupss/edit/<accountgroup_id>/", methods=["POST"])
-@login_required
+@login_required(role="admin")
 def accountgroups_edit(accountgroup_id):
 
     print("Tehdään tiliryhmälle jotain")
@@ -64,7 +96,7 @@ def accountgroups_edit(accountgroup_id):
     return redirect(url_for("accountgroups_index"))
 
 @app.route("/accountgroups/", methods=["POST"])
-@login_required
+@login_required(role="admin")
 def accountgroups_create():
     form = AccountGroupForm(request.form)
 

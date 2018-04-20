@@ -1,7 +1,7 @@
 from flask import redirect, render_template, request, url_for
-from flask_login import login_required, current_user
+from flask_login import current_user
 
-from application import app, db
+from application import app, db, login_required
 from application.accounts.models import Account
 from application.accountgroups.models import AccountGroup
 from application.accounts.forms import AccountForm, AccountEditForm
@@ -13,6 +13,7 @@ def accounts_index():
     accounts = Account.query.filter(Account.entity_id == current_user.get_entity_id()).order_by(Account.number).all())
 
 @app.route("/accounts/new/<accountgroup_id>/", methods=["GET", "POST"])
+##@login_required(role="admin")
 def accounts_form(accountgroup_id):
 
     accountgroup = AccountGroup.query.filter(AccountGroup.entity_id == current_user.get_entity_id(), AccountGroup.id == accountgroup_id).first()
@@ -21,7 +22,7 @@ def accounts_form(accountgroup_id):
     
 
 @app.route("/accounts/select/<account_id>/", methods=["POST"])
-@login_required
+##@login_required(role="admin")
 def account_select_for_edit(account_id):
 
     print("Valittu editoitavaksi tili id = " + account_id)
@@ -32,10 +33,12 @@ def account_select_for_edit(account_id):
     form.description.data = account.description
     form.inuse.data = account.inuse
 
-    return render_template("accounts/edit.html", form = form, account_id = account_id, number = account.number)
+    return redirect(url_for("accountgroups_edit_account",
+        editAccountForm = form, editAccountId = account_id, editAccountNumber = account.number), code=307)
+    ##return render_template("accounts/edit.html", form = form, account_id = account_id, number = account.number)
 
 @app.route("/accounts/edit/<account_id>/", methods=["POST"])
-@login_required
+##@login_required(role="admin")
 def accounts_edit(account_id):
 
     print("Tehdään tilille jotain")
@@ -67,16 +70,16 @@ def accounts_edit(account_id):
             ## TÄHÄN VIRHETILANTEEN KÄSITTELY
             pass
 
-    return redirect(url_for("accounts_index"))
+    return redirect(url_for("accountgroups_index"))
 
 @app.route("/accounts/<accountgroup_id>/", methods=["POST"])
-@login_required
+##@login_required(role="admin")
 def accounts_create(accountgroup_id):
     form = AccountForm(request.form)
 
     if not form.validate():
         print("Validointi ei onnistunut accounts_create:ssa")
-        return render_template("accounts/new.html", form = form)
+        return render_template("accounts/new.html", form = form, accountgroup = accountgroup_id)
 
     a = Account(form.number.data, form.name.data, form.description.data, form.inuse.data, accountgroup_id, current_user.get_entity_id())
     try:
@@ -86,4 +89,4 @@ def accounts_create(accountgroup_id):
         ## TÄHÄN VIRHETILANTEEN KÄSITTELY
         pass
 
-    return redirect(url_for("accounts_index"))
+    return redirect(url_for("accountgroups_index"))

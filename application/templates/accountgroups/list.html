@@ -1,32 +1,239 @@
 {% extends "layout.html" %}
 
 {% block body %}
-  <table>
+<div>
+  <table class="container-fluid">
     <tr>
       <th>Tiliryhm&auml;</th>
+      <th>&nbsp;</th>
       <th>Tiliryhm&auml;n nimi</th>
       <th>Kuvaus</th>
       <th>K&auml;yt&ouml;ss&auml;</th>
       <th></th>
-      <th></th>
+      <th>
+        <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#addAccountGroup" aria-expanded="false" aria-controls="addAccountGroup">
+            &#x2b;
+        </button>
+      </th>
     </tr>
-    {% for accountgroup in accountgroups %}
+
+    {# UUSI TILIRYHMÄ ALKAA #}
+
+    <tr class="collapse" id="addAccountGroup">
+      <form method="POST" action="{{ url_for('accountgroups_create') }}">
+        <td>{{ newaccountgroupform.number }}</td>
+        <td></td>
+        <td>{{ newaccountgroupform.name }}</td>
+        <td>{{ newaccountgroupform.description }}</td>
+        <td>{{ newaccountgroupform.inuse }}</td>
+        <td></td>
+        <td>
+          <input type="submit" value="Lis&auml;&auml; ryhm&auml;"/>
+        </td>
+      </form>
+    </tr>
+    {% if newaccountgroupform.number.errors %}
     <tr>
-      <form method="POST" action="{{ url_for('accountgroup_select_for_edit', accountgroup_id=accountgroup.id) }}">
-        <td>{{ accountgroup.number }}</td>
-        <td>{{ accountgroup.name }}</td>
-        <td>{{ accountgroup.description }}</td>
-        <td>{% if accountgroup.inuse %} Kyll&auml; {% endif %}</td>
-        <td>
-            <input type="submit" value="Muuta"/>
-        </td>
-      </form>
-      <form method="POST" action="{{ url_for('accounts_form', accountgroup_id=accountgroup.id) }}">
-        <td>
-          <input type="submit" value="Lis&auml;&auml; tili"/>
-        </td>
-      </form>
+      <td></td>
+      <td colspan="6">
+        <ul>
+          {% for error in newaccountgroupform.number.errors %}
+          <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+      </td>
     </tr>
+    {% endif %}
+    {% if newaccountgroupform.name.errors %}
+    <tr>
+      <td></td>
+      <td colspan="6">
+        <ul>
+          {% for error in newaccountgroupform.name.errors %}
+          <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+      </td>
+    </tr>
+    {% endif %}
+    {% if newaccountgroupform.description.errors %}
+    <tr>
+      <td></td>
+      <td colspan="6">
+        <ul>
+          {% for error in newaccountgroupform.description.errors %}
+          <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+      </td>
+    </tr>
+    {% endif %}
+
+    {# UUSI TILIRYHMÄ LOPPUU #}
+
+    {# TILIRYHMÄ ALKAA #}
+
+    {% set ns = namespace(preag=-1) %}
+    {% for ag in accountgroups %}
+    {% if ns.preag != ag.account_group_id %}
+      <tr class="list-group_item list-group-item-primary">
+        <form method="POST" action="{{ url_for('accountgroup_select_for_edit', accountgroup_id=ag.account_group_id) }}">
+          <td>{{ ag.account_group_number }}</td>
+          <td>&nbsp;</td>
+          <td>{{ ag.account_group_name }}</td>
+          <td>{{ ag.account_group_description }}</td>
+          <td>{% if ag.account_group_inuse %} Kyll&auml; {% endif %}</td>
+          <td>
+              <input type="submit" value="Muuta"/>
+          </td>
+        </form>
+        <td>&nbsp;</td>
+      </tr>
+      
+      {# TILIRYHMÄ LOPPUU #}
+
+      {# UUSI TILI ALKAA #}
+
+      <tr class="list-group_item list-group-item-secondary">
+        <td></td>
+        <td>{{ newaccountform.number.label }}</td>
+        <td>{{ newaccountform.name.label }}</td>
+        <td>{{ newaccountform.description.label }}</td>
+        <td>{{ newaccountform.inuse.label }}</td>
+        <td><!-- sarake 6 --></td>
+        <td>
+          <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#addAccountToGroup{{ ag.account_group_id }}" aria-expanded="false" aria-controls="addAccountToGroup{{ ag.account_group_id }}">
+              &#x2b;
+          </button>
+        </td>
+      </tr>
+      <tr class="collapse" id="addAccountToGroup{{ ag.account_group_id }}">
+        <form method="POST" action="{{ url_for('accounts_create', accountgroup_id=ag.account_group_id) }}">
+          <td></td>
+          <td>{{ newaccountform.number }}</td>
+          <td>{{ newaccountform.name }}</td>
+          <td>{{ newaccountform.description }}</td>
+          <td>{{ newaccountform.inuse }}</td>
+          <td>
+            <input type="hidden" name="accountgroup_id" value="{{ ag.account_group_id }}">
+          </td>
+          <td>
+            <input type="submit" value="Lis&auml;&auml; tili"/>
+          </td>
+        </form>
+      </tr>
+      {% if newaccountform.number.errors %}
+      <tr>
+        <td></td>
+        <td colspan="6">
+          <ul>
+            {% for error in newaccountform.number.errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+          </ul>
+        </td>
+      </tr>
+      {% endif %}
+      {% if newaccountform.name.errors %}
+      <tr>
+        <td></td>
+        <td colspan="6">
+          <ul>
+            {% for error in newaccountform.name.errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+          </ul>
+        </td>
+      </tr>
+      {% endif %}
+      {% if newaccountform.description.errors %}
+      <tr>
+        <td></td>
+        <td colspan="6">
+          <ul>
+            {% for error in newaccountform.description.errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+          </ul>
+        </td>
+      </tr>
+      {% endif %}
+
+      {# UUSI TILI LOPPUU #}
+
+    {% endif %}
+    {% set ns.preag = ag.account_group_id %}
+
+    {# TILIN MUOKKAUS ALKAA #}
+
+    {% if (editaccountid is defined and ag.account_id|int() == editaccountid|int()) %}
+
+      <tr>
+        <form method="POST" action="{{ url_for('accounts_edit', account_id=editaccountid) }}">
+          <td></td>
+          <td>{{ editaccountnumber }}</td>
+          <td>{{ editaccountform.name }}</td>
+          <td>{{ editaccountform.description }}</td>
+          <td>{{ editaccountform.inuse }}</td>
+          <td>
+            <input type="hidden" name="accountgroup_id" value="{{ ag.account_group_id }}">
+          </td>
+          <td>
+              <input type="submit" name="action_update" value="Tallenna"/>
+              <input type="submit" name="action_delete" value="Poista"/>
+          </td>
+        </form>
+      </tr>
+      {% if editaccountform.name.errors %}
+      <tr>
+        <td></td>
+        <td colspan="6">
+          <ul>
+            {% for error in editaccountform.name.errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+          </ul>
+        </td>
+      </tr>
+      {% endif %}
+      {% if editaccountform.description.errors %}
+      <tr>
+        <td></td>
+        <td colspan="6">
+          <ul>
+            {% for error in editaccountform.description.errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+          </ul>
+        </td>
+      </tr>
+      {% endif %}
+
+    {# TILIN MUOKKAUS LOPPUU #}
+
+    {# TILI ALKAA #}
+
+    {% elif ag.account_id is not none %}
+      <tr>
+        <form method="POST" action="{{ url_for('account_select_for_edit', account_id=ag.account_id) }}">
+          <td></td>
+          <td>{{ ag.account_number }}</td>
+          <td>{{ ag.account_name }}</td>
+          <td>{{ ag.account_description }}</td>
+          <td>{% if ag.account_inuse %} Kyll&auml; {% endif %}</td>
+          <td>
+            <input type="submit" value="Muuta"/>
+          </td>
+          <td>
+              <input type="hidden" name="accountgroup_id" value="{{ ag.account_group_id }}">
+          </td>
+        </form>
+      </tr>
+    {% endif %}
+
+    {# TILI LOPPUU #}
+
     {% endfor %}
   </table>
+</div>
 {% endblock %}

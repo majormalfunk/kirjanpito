@@ -7,12 +7,14 @@ class UserAccount(Base):
     username = db.Column(db.String(144), nullable=False)
     password = db.Column(db.String(144), nullable=False)
     entity_id = db.Column(db.Integer, db.ForeignKey("entity.id"), nullable = False)
+    role = db.Column(db.String(10))
 
-    def __init__(self, name, username, password, entity_id) :
+    def __init__(self, name, username, password, entity_id, role) :
         self.name = name
         self.username = username
         self.password = password
         self.entity_id = entity_id
+        self.role = role
   
     def get_id(self):
         return self.id
