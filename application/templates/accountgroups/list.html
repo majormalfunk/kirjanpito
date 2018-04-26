@@ -19,8 +19,8 @@
 
     {# UUSI TILIRYHMÄ ALKAA #}
 
-    <tr class="collapse" id="addAccountGroup">
-      <form method="POST" action="{{ url_for('accountgroups_create') }}">
+    <form method="POST" action="{{ url_for('accountgroup_new_group') }}">
+        <tr class="collapse" id="addAccountGroup">
         <td>{{ newaccountgroupform.number }}</td>
         <td></td>
         <td>{{ newaccountgroupform.name }}</td>
@@ -30,7 +30,6 @@
         <td>
           <input type="submit" value="Lis&auml;&auml; ryhm&auml;"/>
         </td>
-      </form>
     </tr>
     {% if newaccountgroupform.number.errors %}
     <tr>
@@ -68,16 +67,75 @@
       </td>
     </tr>
     {% endif %}
+  </form>
 
     {# UUSI TILIRYHMÄ LOPPUU #}
 
-    {# TILIRYHMÄ ALKAA #}
 
     {% set ns = namespace(preag=-1) %}
     {% for ag in accountgroups %}
     {% if ns.preag != ag.account_group_id %}
-      <tr class="list-group_item list-group-item-primary">
-        <form method="POST" action="{{ url_for('accountgroup_select_for_edit', accountgroup_id=ag.account_group_id) }}">
+
+
+{% if (editaccountgroupform is defined and editaccountgroupform.id.data|int == ag.account_group_id|int) %}
+
+<!-- -------------------------------------------------- -->
+
+{# TILIRYHMÄN MUOKKAUS ALKAA #}
+
+<form method="POST" action="{{ url_for('accountgroup_edit_group', accountgroup_id=editaccountgroupform.id.data) }}">
+    <tr>
+      <td></td>
+      <td>{{ editaccountgroupform.number.data }}</td>
+      <td>{{ editaccountgroupform.name }}</td>
+      <td>{{ editaccountgroupform.description }}</td>
+      <td>{{ editaccountgroupform.inuse }}</td>
+      <td>
+          <input type="hidden" name="accountgroupnumber" value="{{ editaccountgroupform.number.data }}">
+          <input type="hidden" name="accountgroup_id" value="{{ ag.account_group_id }}">
+      </td>
+      <td>
+          <input type="submit" name="action_update" value="Tallenna"/>
+          <input type="submit" name="action_delete" value="Poista"/>
+      </td>
+  </tr>
+  {% if editaccountgroupform.name.errors %}
+  <tr>
+    <td></td>
+    <td colspan="6">
+      <ul>
+        {% for error in editaccountgroupform.name.errors %}
+        <li>{{ error }}</li>
+        {% endfor %}
+      </ul>
+    </td>
+  </tr>
+  {% endif %}
+  {% if editaccountgroupform.description.errors %}
+  <tr>
+    <td></td>
+    <td colspan="6">
+      <ul>
+        {% for error in editaccountgroupform.description.errors %}
+        <li>{{ error }}</li>
+        {% endfor %}
+      </ul>
+    </td>
+  </tr>
+  {% endif %}
+</form>
+
+{# TILIRYHMÄN MUOKKAUS LOPPUU #}
+
+
+
+<!-- -------------------------------------------------- -->
+{% else %}
+
+{# TILIRYHMÄ ALKAA #}
+
+    <tr class="list-group_item list-group-item-primary">
+        <form method="POST" action="{{ url_for('accountgroup_select_group', accountgroup_id=ag.account_group_id) }}">
           <td>{{ ag.account_group_number }}</td>
           <td>&nbsp;</td>
           <td>{{ ag.account_group_name }}</td>
@@ -92,7 +150,84 @@
       
       {# TILIRYHMÄ LOPPUU #}
 
+{% endif %}
+
       {# UUSI TILI ALKAA #}
+
+      {% if (invalidaccountform is defined and
+        invalidaccountform.accountgroup_id.data == ag.account_group_id) %}
+
+      <tr class="list-group_item list-group-item-secondary">
+        <td></td>
+        <td>{{ invalidaccountform.number.label }}</td>
+        <td>{{ invalidaccountform.name.label }}</td>
+        <td>{{ invalidaccountform.description.label }}</td>
+        <td>{{ invalidaccountform.inuse.label }}</td>
+        <td><!-- sarake 6 --></td>
+        <td>
+          <button class="btn btn-primary"
+                  type="button"
+                  data-toggle="collapse"
+                  data-target="#addAccountToGroup{{ ag.account_group_id }}"
+                  aria-expanded="true"
+                  aria-controls="addAccountToGroup{{ ag.account_group_id }}">
+              &#x2b;
+          </button>
+        </td>
+      </tr>
+      <form method="POST" action="{{ url_for('accountgroups_new_account', accountgroup_id=ag.account_group_id) }}">
+          <tr class="collapse show">
+          <td></td>
+          <td>{{ invalidaccountform.number }}</td>
+          <td>{{ invalidaccountform.name }}</td>
+          <td>{{ invalidaccountform.description }}</td>
+          <td>{{ invalidaccountform.inuse }}</td>
+          <td>
+            <input type="hidden" name="accountgroup_id" value="{{ ag.account_group_id }}">
+          </td>
+          <td>
+            <input type="submit" value="Lis&auml;&auml; tili"/>
+          </td>
+      </tr>
+      {% if invalidaccountform.number.errors %}
+      <tr>
+        <td></td>
+        <td colspan="6">
+          <ul>
+            {% for error in invalidaccountform.number.errors %}
+            <li>{{ invalidaccountform.number.label }} {{ error }}</li>
+            {% endfor %}
+          </ul>
+        </td>
+      </tr>
+      {% endif %}
+      {% if invalidaccountform.name.errors %}
+      <tr>
+        <td></td>
+        <td colspan="6">
+          <ul>
+            {% for error in invalidaccountform.name.errors %}
+            <li>{{ invalidaccountform.name.label }} {{ error }}</li>
+            {% endfor %}
+          </ul>
+        </td>
+      </tr>
+      {% endif %}
+      {% if invalidaccountform.description.errors %}
+      <tr>
+        <td></td>
+        <td colspan="6">
+          <ul>
+            {% for error in invalidaccountform.description.errors %}
+            <li>{{ invalidaccountform.description.label }} {{ error }}</li>
+            {% endfor %}
+          </ul>
+        </td>
+      </tr>
+      {% endif %}
+    </form>
+
+    {% else %}
 
       <tr class="list-group_item list-group-item-secondary">
         <td></td>
@@ -102,13 +237,18 @@
         <td>{{ newaccountform.inuse.label }}</td>
         <td><!-- sarake 6 --></td>
         <td>
-          <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#addAccountToGroup{{ ag.account_group_id }}" aria-expanded="false" aria-controls="addAccountToGroup{{ ag.account_group_id }}">
+          <button class="btn btn-primary"
+                  type="button"
+                  data-toggle="collapse"
+                  data-target="#addAccountToGroup{{ ag.account_group_id }}"
+                  aria-expanded="false"
+                  aria-controls="addAccountToGroup{{ ag.account_group_id }}">
               &#x2b;
           </button>
         </td>
       </tr>
-      <tr class="collapse" id="addAccountToGroup{{ ag.account_group_id }}">
-        <form method="POST" action="{{ url_for('accounts_create', accountgroup_id=ag.account_group_id) }}">
+      <form method="POST" action="{{ url_for('accountgroups_new_account', accountgroup_id=ag.account_group_id) }}">
+          <tr class="collapse" id="addAccountToGroup{{ ag.account_group_id }}">
           <td></td>
           <td>{{ newaccountform.number }}</td>
           <td>{{ newaccountform.name }}</td>
@@ -120,43 +260,9 @@
           <td>
             <input type="submit" value="Lis&auml;&auml; tili"/>
           </td>
-        </form>
       </tr>
-      {% if newaccountform.number.errors %}
-      <tr>
-        <td></td>
-        <td colspan="6">
-          <ul>
-            {% for error in newaccountform.number.errors %}
-            <li>{{ error }}</li>
-            {% endfor %}
-          </ul>
-        </td>
-      </tr>
-      {% endif %}
-      {% if newaccountform.name.errors %}
-      <tr>
-        <td></td>
-        <td colspan="6">
-          <ul>
-            {% for error in newaccountform.name.errors %}
-            <li>{{ error }}</li>
-            {% endfor %}
-          </ul>
-        </td>
-      </tr>
-      {% endif %}
-      {% if newaccountform.description.errors %}
-      <tr>
-        <td></td>
-        <td colspan="6">
-          <ul>
-            {% for error in newaccountform.description.errors %}
-            <li>{{ error }}</li>
-            {% endfor %}
-          </ul>
-        </td>
-      </tr>
+    </form>
+
       {% endif %}
 
       {# UUSI TILI LOPPUU #}
@@ -166,24 +272,23 @@
 
     {# TILIN MUOKKAUS ALKAA #}
 
-    {% if (editaccountid is defined and ag.account_id|int() == editaccountid|int()) %}
+    {% if (editaccountform is defined and editaccountform.id.data|int == ag.account_id|int) %}
 
-      <tr>
-        <form method="POST" action="{{ url_for('accounts_edit', account_id=editaccountid) }}">
+    <form method="POST" action="{{ url_for('accountgroup_edit_account', account_id=editaccountform.id.data) }}">
+        <tr>
           <td></td>
-          <td>{{ editaccountnumber }}</td>
+          <td>{{ editaccountform.number.data }}</td>
           <td>{{ editaccountform.name }}</td>
           <td>{{ editaccountform.description }}</td>
           <td>{{ editaccountform.inuse }}</td>
           <td>
-              <input type="hidden" name="accountnumber" value="{{ editaccountnumber }}">
+              <input type="hidden" name="accountnumber" value="{{ editaccountform.number.data }}">
               <input type="hidden" name="accountgroup_id" value="{{ ag.account_group_id }}">
           </td>
           <td>
               <input type="submit" name="action_update" value="Tallenna"/>
               <input type="submit" name="action_delete" value="Poista"/>
           </td>
-        </form>
       </tr>
       {% if editaccountform.name.errors %}
       <tr>
@@ -209,6 +314,7 @@
         </td>
       </tr>
       {% endif %}
+    </form>
 
     {# TILIN MUOKKAUS LOPPUU #}
 
@@ -216,7 +322,7 @@
 
     {% elif ag.account_id is not none %}
       <tr>
-        <form method="POST" action="{{ url_for('account_select_for_edit', account_id=ag.account_id) }}">
+        <form method="POST" action="{{ url_for('accountgroup_select_account', account_id=ag.account_id) }}">
           <td></td>
           <td>{{ ag.account_number }}</td>
           <td>{{ ag.account_name }}</td>
