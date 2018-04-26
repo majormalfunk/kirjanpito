@@ -3,9 +3,9 @@ from flask_login import current_user
 
 from application import app, db, login_required
 from application.accountgroups.models import AccountGroup
-from application.accountgroups.forms import AccountGroupForm, AccountGroupEditForm
+from application.accountgroups.forms import AccountGroupForm
 from application.accounts.models import Account
-from application.accounts.forms import AccountForm, AccountEditForm
+from application.accounts.forms import AccountForm
 
 ##
 ## PERUSREITTI
