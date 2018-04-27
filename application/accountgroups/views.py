@@ -17,27 +17,34 @@ def accountgroups_index():
     print("*** accountgroups_index ***")
 
     return render_template("accountgroups/list.html",
+    action = "NoAction",
+    targetgroup = -1,
+    targetaccount = -1,
     accountgroups = AccountGroup.findAllGroupsAndAccounts(current_user.get_entity_id()),
     newaccountgroupform = AccountGroupForm(),
-    newaccountform = AccountForm(),
-    invalidaccountform = AccountForm())
+    newaccountform = AccountForm())
 
 ##
 ## TÄMÄ REITTI, KUN LISÄTÄÄN UUSI TILIRYHMÄ
 ##
-@app.route("/accountgroups/", methods=["POST"])
+@app.route("/accountgroups/newgroup/", methods=["POST"])
 @login_required(role="admin")
 def accountgroup_new_group():
 
     accountgroupform = AccountGroupForm(request.form)
 
     if not accountgroupform.validate():
+        print("Validointi ei onnistunut")
         return render_template("accountgroups/list.html",
+            action = "FixNewAccountGroup",
+            targetgroup = -1,
+            targetaccount = -1,
             accountgroups = AccountGroup.findAllGroupsAndAccounts(current_user.get_entity_id()),
-            invalidaccountform = accountgroupform,
-            ##newaccountgroupform = AccountGroupForm(),
+            fixnewaccountgroupform = accountgroupform,
+            newaccountgroupform = AccountGroupForm(),
             newaccountform = AccountForm())
 
+    print("Yritetään tallentaa tietokantaan")
 
     a = AccountGroup(accountgroupform.number.data,
                     accountgroupform.name.data,
@@ -47,6 +54,7 @@ def accountgroup_new_group():
     try:
         db.session().add(a)
         db.session().commit()
+        print("Tallennus onnistui")
     except:
         ## TÄHÄN VIRHETILANTEEN KÄSITTELY
         print("Tapahtui virhe lisättäessä tiliryhmää tietokantaan")
@@ -72,11 +80,13 @@ def accountgroup_select_group(accountgroup_id):
     editaccountgroupform.inuse.data = accountgroup.inuse
 
     return render_template("accountgroups/list.html",
+        action = "EditAccountGroup",
+        targetgroup = accountgroup_id,
+        targetaccount = -1,
         accountgroups = AccountGroup.findAllGroupsAndAccounts(current_user.get_entity_id()),
-        ##invalidaccountform = AccountForm(),
         newaccountgroupform = AccountGroupForm(),
-        newaccountform = AccountForm(),
-        editaccountgroupform = editaccountgroupform)
+        editaccountgroupform = editaccountgroupform,
+        newaccountform = AccountForm())
 
 ##
 ## TÄMÄ REITTI, KUN OLLAAN TALLENTAMASSA MUUTOSTA TILIRYHMÄÄN
@@ -85,19 +95,28 @@ def accountgroup_select_group(accountgroup_id):
 @login_required(role="admin")
 def accountgroup_edit_group(accountgroup_id):
 
-    print("Tehdään tiliryhmälle jotain")
+    print("Tehdään tiliryhmälle " + accountgroup_id + " jotain")
 
-    form = AccountGroupEditForm(request.form)
+    editaccountgroupform = AccountGroupForm(request.form)
+    print("groupid on " + str(editaccountgroupform.id.data))
+    editaccountgroupform.id.data = accountgroup_id
 
-    if not form.validate():
-        return render_template("accountgroups/edit.html", form = form, accountgroup_id = accountgroup_id)
+    if not editaccountgroupform.validate():
+        return render_template("accountgroups/list.html",
+            action = "EditAccountGroup",
+            targetgroup = accountgroup_id,
+            targetaccount = -1,
+            accountgroups = AccountGroup.findAllGroupsAndAccounts(current_user.get_entity_id()),
+            newaccountgroupform = AccountGroupForm(),
+            editaccountgroupform = editaccountgroupform,
+            newaccountform = AccountForm())
 
     if "action_update" in request.form:
         print("Yritetään tallentaa")
         accountgroup = AccountGroup.query.filter(AccountGroup.entity_id == current_user.get_entity_id(), AccountGroup.id == accountgroup_id).first()
-        accountgroup.name = form.name.data
-        accountgroup.description = form.description.data
-        accountgroup.inuse = form.inuse.data
+        accountgroup.name = editaccountgroupform.name.data
+        accountgroup.description = editaccountgroupform.description.data
+        accountgroup.inuse = editaccountgroupform.inuse.data
         try:
             db.session().commit()
         except:
@@ -121,15 +140,19 @@ def accountgroup_edit_group(accountgroup_id):
 ##
 @app.route("/accountgroups/newaccount/<accountgroup_id>/", methods=["POST"])
 @login_required(role="admin")
-def accountgroups_new_account(accountgroup_id):
+def accountgroup_new_account(accountgroup_id):
 
     accountform = AccountForm(request.form)
+    print("Yritetään lisätä uutta tiliä ryhmään " + str(accountform.accountgroup_id.data))
 
     if not accountform.validate():
         return render_template("accountgroups/list.html",
+            action = "FixNewAccount",
+            targetgroup = accountgroup_id,
+            targetaccount = -1,
             accountgroups = AccountGroup.findAllGroupsAndAccounts(current_user.get_entity_id()),
-            invalidaccountform = accountform,
             newaccountgroupform = AccountGroupForm(),
+            fixnewaccountform = accountform,
             newaccountform = AccountForm())
 
 
@@ -162,8 +185,10 @@ def accountgroup_select_account(account_id):
     editaccountform.inuse.data = account.inuse
 
     return render_template("accountgroups/list.html",
+        action = "EditAccount",
+        targetgroup = account.accountgroup_id,
+        targetaccount = account_id,
         accountgroups = AccountGroup.findAllGroupsAndAccounts(current_user.get_entity_id()),
-        ##invalidaccountform = AccountForm(),
         newaccountgroupform = AccountGroupForm(),
         newaccountform = AccountForm(),
         editaccountform = editaccountform)
@@ -177,22 +202,28 @@ def accountgroup_edit_account(account_id):
 
     print("Tehdään tilille jotain")
 
-    editaccountform = AccountEditForm(request.form)
+    editaccountform = AccountForm(request.form)
 
-    if not form.validate():
+    print("id:", editaccountform.id.data)
+    print("group_id:", editaccountform.accountgroup_id.data)
+
+    if not editaccountform.validate():
+        print("Tilin validointi editoidessa ei onnistunut")
         return render_template("accountgroups/list.html",
+            action = "EditAccount",
+            targetgroup = editaccountform.accountgroup_id.data,
+            targetaccount = account_id,
             accountgroups = AccountGroup.findAllGroupsAndAccounts(current_user.get_entity_id()),
-            ##invalidaccountform = AccountForm(),
             newaccountgroupform = AccountGroupForm(),
-            newaccountform = AccountForm(),
-            editaccountform = editaccountform)
+            editaccountgroupform = AccountGroupForm(),
+            newaccountform = AccountForm())
 
     if "action_update" in request.form:
         print("Yritetään tallentaa")
         account = Account.query.filter(Account.entity_id == current_user.get_entity_id(), Account.id == account_id).first()
-        account.name = form.name.data
-        account.description = form.description.data
-        account.inuse = form.inuse.data
+        account.name = editaccountform.name.data
+        account.description = editaccountform.description.data
+        account.inuse = editaccountform.inuse.data
         try:
             db.session().commit()
         except:
@@ -201,7 +232,7 @@ def accountgroup_edit_account(account_id):
 
     elif "action_delete" in request.form:
         print("Yritetään poistaa")
-        obsolete = Account.query.get(account_id)
+        obsolete = Account.query.filter(Account.entity_id == current_user.get_entity_id(), Account.id == account_id).first()
         try:
             db.session().delete(obsolete)
             db.session.commit()
