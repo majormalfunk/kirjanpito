@@ -10,6 +10,8 @@ class Entity(Base):
     user_accounts = db.relationship("UserAccount", backref='entity_useraccounts', lazy=True)
     account_groups = db.relationship("AccountGroup", backref='entity_accountgroups', lazy=True)
     accounts = db.relationship("Account", backref='entity_accounts', lazy=True)
+    domains = db.relationship("Domain", backref='entity_domains', lazy=True)
+    activities = db.relationship("Activity", backref='entity_activities', lazy=True)
 
     def __init__(self, code, name, description):
         self.code = code

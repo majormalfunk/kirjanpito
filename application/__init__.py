@@ -68,6 +68,12 @@ from application.accountgroups import models
 from application.accountgroups import views
 # Ja kansion application/accounts/ tiedostojen sisältö
 from application.accounts import models
+# Ja kansion application/domains/ tiedostojen sisältö
+from application.domains import models
+from application.domains import views
+# Ja kansion application/activities/ tiedostojen sisältö
+from application.activities import models
+from application.activities import views
 # Ja kansion application/entity/ tiedostojen sisältö
 from application.entity import models
 from application.entity import views
