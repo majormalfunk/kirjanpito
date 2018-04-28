@@ -35,7 +35,7 @@ class AccountGroup(Descriptive):
                             "account_group_number":row[1],
                             "account_group_name":row[2],
                             "account_group_description":row[3],
-                            "account_group.inuse":row[4],
+                            "account_group_inuse":row[4],
                             "account_id":row[5],
                             "account_number":row[6],
                             "account_name":row[7],

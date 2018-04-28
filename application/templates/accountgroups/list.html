@@ -5,8 +5,8 @@
   <table class="container-fluid">
     <tr>
       <th>Tiliryhm&auml;</th>
-      <th>&nbsp;</th>
-      <th>Tiliryhm&auml;n nimi</th>
+      <th>Tili</th>
+      <th>Nimi</th>
       <th>Kuvaus</th>
       <th>K&auml;yt&ouml;ss&auml;</th>
       <th></th>
@@ -159,11 +159,24 @@
             <td>&nbsp;</td>
             <td>{{ ag.account_group_name }}</td>
             <td>{{ ag.account_group_description }}</td>
-            <td>{% if ag.account_group_inuse %} Kyll&auml; {% endif %}</td>
+            {% if ag.account_group_inuse %}
+              <td class="text-success">&#x2713;</td>
+            {% else %}
+              <td class="text-danger">&#x2718;</td>
+            {% endif %}
             <td>
                 <input type="submit" value="Muuta"/>
             </td>
-            <td>&nbsp;</td>
+            <td>
+              <button class="btn btn-primary"
+                type="button"
+                data-toggle="collapse"
+                data-target="#addAccountToGroup{{ ag.account_group_id }}"
+                aria-expanded="false"
+                aria-controls="addAccountToGroup{{ ag.account_group_id }}">
+                &#x2b;
+              </button>
+            </td>
           </tr>
         </form>
         
@@ -240,24 +253,6 @@
 
       {% else %}
 
-        <tr class="list-group_item list-group-item-secondary">
-          <td></td>
-          <td>{{ newaccountform.number.label }}</td>
-          <td>{{ newaccountform.name.label }}</td>
-          <td>{{ newaccountform.description.label }}</td>
-          <td>{{ newaccountform.inuse.label }}</td>
-          <td><!-- sarake 6 --></td>
-          <td>
-            <button class="btn btn-primary"
-                    type="button"
-                    data-toggle="collapse"
-                    data-target="#addAccountToGroup{{ ag.account_group_id }}"
-                    aria-expanded="false"
-                    aria-controls="addAccountToGroup{{ ag.account_group_id }}">
-                &#x2b;
-            </button>
-          </td>
-        </tr>
         <form method="POST" action="{{ url_for('accountgroup_new_account', accountgroup_id=ag.account_group_id) }}">
             <tr class="collapse" id="addAccountToGroup{{ ag.account_group_id }}">
             <td></td>
@@ -340,7 +335,11 @@
           <td>{{ ag.account_number }}</td>
           <td>{{ ag.account_name }}</td>
           <td>{{ ag.account_description }}</td>
-          <td>{% if ag.account_inuse %} Kyll&auml; {% endif %}</td>
+          {% if ag.account_inuse %}
+            <td class="text-success">&#x2713;</td>
+          {% else %}
+            <td class="text-danger">&#x2718;</td>
+          {% endif %}
           <td>
             <input type="submit" value="Muuta"/>
           </td>

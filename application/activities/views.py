@@ -17,7 +17,7 @@ def activities_index():
     return render_template("activities/list.html",
     action = "NoAction",
     targetactivity = -1,
-    activities = Activity.query.filter(Activity.entity_id == current_user.get_entity_id()).all(),
+    activities = Activity.query.filter(Activity.entity_id == current_user.get_entity_id()).order_by(Activity.orderer),
     newactivityform = ActivityForm())
 
 ##
@@ -34,7 +34,7 @@ def activity_new_activity():
         return render_template("activities/list.html",
             action = "FixNewActivity",
             targetactivity = -1,
-            activities = Activity.query.filter(Activity.entity_id == current_user.get_entity_id()).all(),
+            activities = Activity.query.filter(Activity.entity_id == current_user.get_entity_id()).order_by(Activity.orderer),
             fixnewactivityform = activityform,
             newactivityform = ActivityForm())
 
@@ -78,7 +78,7 @@ def activity_select_activity(activity_id):
     return render_template("activities/list.html",
         action = "EditActivity",
         targetactivity = activity_id,
-        activities = Activity.query.filter(Activity.entity_id == current_user.get_entity_id()).all(),
+        activities = Activity.query.filter(Activity.entity_id == current_user.get_entity_id()).order_by(Activity.orderer),
         newactivityform = ActivityForm(),
         editactivityform = editactivityform)
 
@@ -99,7 +99,7 @@ def activity_edit_activity(activity_id):
         return render_template("activities/list.html",
             action = "EditActivity",
             targetactivity = activity_id,
-            activities = Activity.query.filter(Activity.entity_id == current_user.get_entity_id()).all(),
+            activities = Activity.query.filter(Activity.entity_id == current_user.get_entity_id()).order_by(Activity.orderer),
             newactivityform = ActivityForm(),
             editactivityform = editactivityform)
 

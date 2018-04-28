@@ -32,7 +32,7 @@
 
       <form method="POST" action="{{ url_for('domain_new_domain') }}">
         <tr>
-          <td>{{ fixnewdomainform.order }}</td>
+          <td>{{ fixnewdomainform.orderer }}</td>
           <td>{{ fixnewdomainform.code }}</td>
           <td>{{ fixnewdomainform.name }}</td>
           <td>{{ fixnewdomainform.description }}</td>
@@ -42,12 +42,12 @@
             <input type="submit" value="Lis&auml;&auml; kp"/>
           </td>
         </tr>
-        {% if fixnewdomainform.order.errors %}
+        {% if fixnewdomainform.orderer.errors %}
         <tr>
           <td></td>
           <td colspan="6">
             <ul>
-              {% for error in fixnewdomainform.order.errors %}
+              {% for error in fixnewdomainform.orderer.errors %}
               <li>{{ error }}</li>
               {% endfor %}
             </ul>
@@ -96,7 +96,7 @@
 
       <tr class="collapse" id="addDomain">
         <form method="POST" action="{{ url_for('domain_new_domain') }}">
-          <td>{{ newdomainform.order }}</td>
+          <td>{{ newdomainform.orderer }}</td>
           <td>{{ newdomainform.code }}</td>
           <td>{{ newdomainform.name }}</td>
           <td>{{ newdomainform.description }}</td>
@@ -119,7 +119,7 @@
 
         <form method="POST" action="{{ url_for('domain_edit_domain', domain_id=targetdomain) }}">
           <tr>
-            <td>{{ editdomainform.order }}</td>
+            <td>{{ editdomainform.orderer }}</td>
             <td>{{ editdomainform.code.data }}</td>
             <td>{{ editdomainform.name }}</td>
             <td>{{ editdomainform.description }}</td>
@@ -133,12 +133,12 @@
               <input type="submit" name="action_delete" value="Poista"/>
             </td>
           </tr>
-          {% if editdomainform.order.errors %}
+          {% if editdomainform.orderer.errors %}
           <tr>
             <td></td>
             <td colspan="6">
               <ul>
-                {% for error in editdomainform.order.errors %}
+                {% for error in editdomainform.orderer.errors %}
                 <li>{{ error }}</li>
                 {% endfor %}
               </ul>
@@ -177,11 +177,15 @@
 
         <form method="POST" action="{{ url_for('domain_select_domain', domain_id=ag.id) }}">
           <tr>
-            <td>{{ ag.order }}</td>
+            <td>{{ ag.orderer }}</td>
             <td>{{ ag.code }}</td>
             <td>{{ ag.name }}</td>
             <td>{{ ag.description }}</td>
-            <td>{% if ag.inuse %} Kyll&auml; {% endif %}</td>
+            {% if ag.inuse %}
+              <td class="text-success">&#x2713;</td>
+            {% else %}
+              <td class="text-danger">&#x2718;</td>
+            {% endif %}
             <td>
                 <input type="submit" value="Muuta"/>
             </td>

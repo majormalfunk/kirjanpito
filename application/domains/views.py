@@ -17,7 +17,7 @@ def domains_index():
     return render_template("domains/list.html",
     action = "NoAction",
     targetdomain = -1,
-    domains = Domain.query.filter(Domain.entity_id == current_user.get_entity_id()).all(),
+    domains = Domain.query.filter(Domain.entity_id == current_user.get_entity_id()).order_by(Domain.orderer),
     newdomainform = DomainForm())
 
 ##
@@ -34,20 +34,20 @@ def domain_new_domain():
         return render_template("domains/list.html",
             action = "FixNewDomain",
             targetdomain = -1,
-            domains = Domain.query.filter(Domain.entity_id == current_user.get_entity_id()).all(),
+            domains = Domain.query.filter(Domain.entity_id == current_user.get_entity_id()).order_by(Domain.orderer),
             fixnewdomainform = domainform,
             newdomainform = DomainForm())
 
     print("Yritetään tallentaa tietokantaan")
 
-    d = Domain(domainform.order.data,
+    domain = Domain(domainform.orderer.data,
                 domainform.code.data,
                 domainform.name.data,
                 domainform.description.data,
                 domainform.inuse.data,
                 current_user.get_entity_id())
     try:
-        db.session().add(d)
+        db.session().add(domain)
         db.session().commit()
         print("Tallennus onnistui")
     except:
@@ -69,7 +69,7 @@ def domain_select_domain(domain_id):
     editdomainform = DomainForm(request.form)
     domain = Domain.query.filter(Domain.entity_id == current_user.get_entity_id(), Domain.id == domain_id).first()
     editdomainform.id.data = domain.id
-    editdomainform.order.data = domain.order
+    editdomainform.orderer.data = domain.orderer
     editdomainform.code.data = domain.code
     editdomainform.name.data = domain.name
     editdomainform.description.data = domain.description
@@ -78,7 +78,7 @@ def domain_select_domain(domain_id):
     return render_template("domains/list.html",
         action = "EditDomain",
         targetdomain = domain_id,
-        domains = Domain.query.filter(Domain.entity_id == current_user.get_entity_id()).all(),
+        domains = Domain.query.filter(Domain.entity_id == current_user.get_entity_id()).order_by(Domain.orderer),
         newdomainform = DomainForm(),
         editdomainform = editdomainform)
 
@@ -99,14 +99,14 @@ def domain_edit_domain(domain_id):
         return render_template("domains/list.html",
             action = "EditDomain",
             targetdomain = domain_id,
-            domains = Domain.query.filter(Domain.entity_id == current_user.get_entity_id()).all(),
+            domains = Domain.query.filter(Domain.entity_id == current_user.get_entity_id()).order_by(Domain.orderer),
             newdomainform = DomainForm(),
             editdomainform = editdomainform)
 
     if "action_update" in request.form:
         print("Yritetään tallentaa")
         domain = Domain.query.filter(Domain.entity_id == current_user.get_entity_id(), Domain.id == domain_id).first()
-        domain.order = editdomainform.order.data
+        domain.orderer = editdomainform.orderer.data
         domain.name = editdomainform.name.data
         domain.description = editdomainform.description.data
         domain.inuse = editdomainform.inuse.data

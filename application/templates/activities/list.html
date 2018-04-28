@@ -181,7 +181,11 @@
             <td>{{ ag.code }}</td>
             <td>{{ ag.name }}</td>
             <td>{{ ag.description }}</td>
-            <td>{% if ag.inuse %} Kyll&auml; {% endif %}</td>
+            {% if ag.inuse %}
+              <td class="text-success">&#x2713;</td>
+            {% else %}
+              <td class="text-danger">&#x2718;</td>
+            {% endif %}
             <td>
                 <input type="submit" value="Muuta"/>
             </td>
