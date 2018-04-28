@@ -16,8 +16,8 @@ class FiscalYearForm(FlaskForm):
 class FiscalPeriodForm(FlaskForm):
     id = IntegerField("Tunnus")
     name = StringField("Jakson nimi", [validators.Length(min=6, max=6, message="Pituus oltava 6")])
-    startdate = DateField("Alkupäivä", [validators.DataRequired("Alkupäivä on pakollinen")])
-    enddate = DateField("Loppupäivä", [validators.DataRequired("Loppupäivä on pakollinen")])
+    startdate = DateField("Alkupäivä", [validators.DataRequired("Alkupäivä on pakollinen")], format="%d.%m.%Y")
+    enddate = DateField("Loppupäivä", [validators.DataRequired("Loppupäivä on pakollinen")], format="%d.%m.%Y")
     closed = BooleanField("Suljettu")
     locked = BooleanField("Lukittu")
     fiscalyear_id = IntegerField("Tilikausi")
