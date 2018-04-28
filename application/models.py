@@ -17,3 +17,16 @@ class Descriptive(Base):
     description = db.Column(db.String(255), nullable=True)
     inuse = db.Column(db.Boolean, nullable=False)
 
+class Lockable(Base):
+
+    __abstract__ = True
+
+    closed = db.Column(db.Boolean, nullable=False)
+    locked = db.Column(db.Boolean, nullable=False)
+
+class TimeBased(Lockable):
+
+    __abstract__ = True
+
+    startdate = db.Column(db.Date, nullable=False)
+    enddate = db.Column(db.Date, nullable=False)

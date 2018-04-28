@@ -215,8 +215,8 @@ def accountgroup_edit_account(account_id):
             targetaccount = account_id,
             accountgroups = AccountGroup.findAllGroupsAndAccounts(current_user.get_entity_id()),
             newaccountgroupform = AccountGroupForm(),
-            editaccountgroupform = AccountGroupForm(),
-            newaccountform = AccountForm())
+            newaccountform = AccountForm(),
+            editaccountform = editaccountform)
 
     if "action_update" in request.form:
         print("Yritetään tallentaa")

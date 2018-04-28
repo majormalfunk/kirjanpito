@@ -1,0 +1,350 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<div>
+  <table class="container-fluid">
+    <tr>
+      <th>Tilikausi</th>
+      <th>Kausi</th>
+      <th>Alkupvm</th>
+      <th>Loppupvm</th>
+      <th>Suljettu</th>
+      <th>Lukittu</th>
+      <th>&nbsp;</th>
+      <th>
+        {% if action == "FixNewFiscalYear" %}
+          &nbsp;
+        {% else %}
+          <button class="btn btn-primary"
+                  type="button"
+                  data-toggle="collapse"
+                  data-target="#addFiscalYear"
+                  aria-expanded="false"
+                  aria-controls="addFiscalYear">
+                  &#x2b;
+          </button>
+        {% endif %}
+      </th>
+    </tr>
+
+    {# UUSI TILIKAUSI ALKAA #}
+
+    {% if action == "FixNewFiscalYear" %}
+
+      <form method="POST" action="{{ url_for('fiscalperiod_new_year') }}">
+        <tr>
+          <td>{{ fixnewfiscalyearform.name }}</td>
+          <td></td>
+          <td>{{ fixnewfiscalyearform.startdate }}</td>
+          <td>{{ fixnewfiscalyearform.enddate }}</td>
+          <td>{{ fixnewfiscalyearform.closed }}</td>
+          <td></td>
+          <td></td>
+          <td>
+            <input type="submit" value="Lis&auml;&auml; tilikausi"/>
+          </td>
+        </tr>
+        {% if fixnewfiscalyearform.startdate.errors %}
+        <tr>
+          <td></td>
+          <td colspan="7">
+            <ul>
+              {% for error in fixnewfiscalyearform.startdate.errors %}
+              <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          </td>
+        </tr>
+        {% endif %}
+        {% if fixnewfiscalyearform.enddate.errors %}
+        <tr>
+          <td></td>
+          <td colspan="7">
+            <ul>
+              {% for error in fixnewfiscalyearform.enddate.errors %}
+              <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          </td>
+        </tr>
+        {% endif %}
+      </form>
+
+    {% else %}
+
+      <tr class="collapse" id="addFiscalYear">
+        <form method="POST" action="{{ url_for('fiscalperiod_new_year') }}">
+        <td>{{ newfiscalyearform.name }}</td>
+        <td></td>
+        <td>{{ newfiscalyearform.startdate }}</td>
+        <td>{{ newfiscalyearform.enddate }}</td>
+        <td>{{ newfiscalyearform.closed }}</td>
+        <td></td>
+        <td></td>
+        <td>
+          <input type="submit" value="Lis&auml;&auml; tilikausi"/>
+        </td>
+        </form>
+      </tr>
+    {% endif %}
+
+    {# UUSI TILIKAUSI LOPPUU #}
+
+    {% set ns = namespace(preag=-1) %}
+    {% for ag in fiscalperiods %}
+    {% if ns.preag != ag.fiscal_year_id %}
+
+    {# TILIKAUDEN MUOKKAUS ALKAA #}
+
+      {% if (action == "EditFiscalYear" and targetyear|int == ag.fiscal_year_id|int) %}
+
+        <form method="POST" action="{{ url_for('fiscalperiod_edit_year', fiscalyear_id=targetyear) }}">
+          <tr>
+            <td>{{ editfiscalyearform.name.data }}</td>
+            <td></td>
+            <td>{{ editfiscalyearform.startdate }}</td>
+            <td>{{ editfiscalyearform.enddate }}</td>
+            <td>{{ editfiscalyearform.closed }}</td>
+            <td>{{ editfiscalyearform.locked }}</td>
+            <td></td>
+            <td>
+              <input type="hidden" id="name" name="name" value="{{ editfiscalyearform.name.data }}">
+              <input type="hidden" id="id" name="id" value="{{ ag.fiscal_year_id }}">
+              <input type="submit" name="action_update" value="Tallenna"/>
+              <input type="submit" name="action_delete" value="Poista"/>
+            </td>
+          </tr>
+          {% if editfiscalyearform.startdate.errors %}
+          <tr>
+            <td></td>
+            <td colspan="7">
+              <ul>
+                {% for error in editfiscalyearform.startdate.errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+              </ul>
+            </td>
+          </tr>
+          {% endif %}
+          {% if editfiscalyearform.enddate.errors %}
+          <tr>
+            <td></td>
+            <td colspan="7">
+              <ul>
+                {% for error in editfiscalyearform.enddate.errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+              </ul>
+            </td>
+          </tr>
+          {% endif %}
+        </form>
+
+      {% else %}
+
+        {# TILIKAUSI ALKAA #}
+
+        <form method="POST" action="{{ url_for('fiscalperiod_select_year', fiscalyear_id=ag.fiscal_year_id) }}">
+          <tr class="list-group_item list-group-item-primary">
+            <td>{{ ag.fiscal_year_name }}</td>
+            <td>&nbsp;</td>
+            <td>{{ ag.fiscal_year_startdate }}</td>
+            <td>{{ ag.fiscal_year_enddate }}</td>
+            {% if ag.fiscal_year_closed %}
+              <td class="text-danger">&#x1f512;</td>
+            {% else %}
+              <td class="text-success">&nbsp;</td>
+            {% endif %}
+            {% if ag.fiscal_year_locked %}
+              <td class="text-danger">&#x1f512;</td>
+            {% else %}
+              <td class="text-success">&nbsp;</td>
+            {% endif %}
+            <td>
+                <input type="submit" value="Muuta"/>
+            </td>
+            <td>
+              <button class="btn btn-primary"
+                type="button"
+                data-toggle="collapse"
+                data-target="#addPeriodToYear{{ ag.fiscal_year_id }}"
+                aria-expanded="false"
+                aria-controls="addPeriodToYear{{ ag.fiscal_year_id }}">
+                &#x2b;
+              </button>
+            </td>
+          </tr>
+        </form>
+        
+        {# TILIKAUSI LOPPUU #}
+
+      {% endif %}
+
+    {# TILIKAUDEN MUOKKAUS LOPPUU #}
+
+    {# UUSI KAUSI ALKAA #}
+
+      {% if (action == "FixNewFiscalPeriod" and targetyear|int == ag.fiscal_year_id|int) %}
+
+        <tr class="list-group_item list-group-item-secondary">
+          <td></td>
+          <td>{{ fixnewfiscalperiodform.name.label }}</td>
+          <td>{{ fixnewfiscalperiodform.startdate.label }}</td>
+          <td>{{ fixnewfiscalperiodform.enddate.label }}</td>
+          <td>{{ fixnewfiscalperiodform.closed.label }}</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+        </tr>
+        <form method="POST" action="{{ url_for('fiscalperiod_new_period', fiscalyear_id=ag.fiscal_year_id) }}">
+          <tr>
+            <td></td>
+            <td>{{ fixnewfiscalperiodform.name }}</td>
+            <td>{{ fixnewfiscalperiodform.startdate }}</td>
+            <td>{{ fixnewfiscalperiodform.enddate }}</td>
+            <td>{{ fixnewfiscalperiodform.closed }}</td>
+            <td>&nbsp;</td>
+            <td>
+              <input type="hidden" name="fiscalyear_id" value="{{ ag.fiscal_year_id }}">
+            </td>
+            <td>
+              <input type="submit" value="Lis&auml;&auml; kausi"/>
+            </td>
+          </tr>
+          {% if fixnewfiscalperiodform.startdate.errors %}
+          <tr>
+            <td></td>
+            <td colspan="7">
+              <ul>
+                {% for error in fixnewfiscalperiodform.startdate.errors %}
+                <li>{{ fixnewfiscalperiodform.startdate.label }} {{ error }}</li>
+                {% endfor %}
+              </ul>
+            </td>
+          </tr>
+          {% endif %}
+          {% if fixnewfiscalperiodform.enddate.errors %}
+          <tr>
+            <td></td>
+            <td colspan="7">
+              <ul>
+                {% for error in fixnewfiscalperiodform.enddate.errors %}
+                <li>{{ fixnewfiscalperiodform.enddate.label }} {{ error }}</li>
+                {% endfor %}
+              </ul>
+            </td>
+          </tr>
+          {% endif %}
+        </form>
+
+      {% else %}
+
+        <form method="POST" action="{{ url_for('fiscalperiod_new_period', fiscalyear_id=ag.fiscal_year_id) }}">
+          <tr class="collapse" id="addPeriodToYear{{ ag.fiscal_year_id }}">
+            <td></td>
+            <td>{{ newfiscalperiodform.name }}</td>
+            <td>{{ newfiscalperiodform.startdate }}</td>
+            <td>{{ newfiscalperiodform.enddate }}</td>
+            <td>{{ newfiscalperiodform.closed }}</td>
+            <td>&nbsp;</td>
+            <td>
+              <input type="hidden" name="fiscalyear_id" value="{{ ag.fiscal_year_id }}">
+            </td>
+            <td>
+              <input type="submit" value="Lis&auml;&auml; kausi"/>
+            </td>
+          </tr>
+        </form>
+
+      {% endif %}
+
+      {# UUSI KAUSI LOPPUU #}
+
+    {% endif %}
+    {% set ns.preag = ag.fiscal_year_id %}
+
+    {# KAUDEN MUOKKAUS ALKAA #}
+
+    {% if (action == "EditFiscalPeriod" and
+          targetyear|int == ag.fiscal_year_id|int and targetperiod|int == ag.fiscal_period_id|int) %}
+
+      <form method="POST" action="{{ url_for('fiscalperiod_edit_period', fiscalperiod_id=editfiscalperiodform.id.data) }}">
+        <tr>
+          <td></td>
+          <td>{{ editfiscalperiodform.name.data }}</td>
+          <td>{{ editfiscalperiodform.startdate }}</td>
+          <td>{{ editfiscalperiodform.enddate }}</td>
+          <td>{{ editfiscalperiodform.closed }}</td>
+          <td>{{ editfiscalperiodform.locked }}</td>
+          <td>
+            <input type="hidden" id="id" name="id" value="{{ editfiscalperiodform.id.data }}">
+            <input type="hidden" id="name" name="name" value="{{ editfiscalperiodform.name.data }}">
+            <input type="hidden" id="fiscalyear_id" name="fiscalyear_id" value="{{ ag.fiscal_year_id }}">
+            <input type="submit" name="action_update" value="Tallenna"/>
+            <input type="submit" name="action_delete" value="Poista"/>
+          </td>
+          <td></td>
+        </tr>
+        {% if editfiscalperiodform.startdate.errors %}
+        <tr>
+          <td></td>
+          <td colspan="6">
+            <ul>
+              {% for error in editfiscalperiodform.startdate.errors %}
+              <li>{{ editfiscalperiodform.startdate.label }} {{ error }}</li>
+              {% endfor %}
+            </ul>
+          </td>
+        </tr>
+        {% endif %}
+        {% if editfiscalperiodform.enddate.errors %}
+        <tr>
+          <td></td>
+          <td colspan="6">
+            <ul>
+              {% for error in editfiscalperiodform.enddate.errors %}
+              <li>{{ editfiscalperiodform.enddate.label }} {{ error }}</li>
+              {% endfor %}
+            </ul>
+          </td>
+        </tr>
+        {% endif %}
+      </form>
+
+    {# KAUDEN MUOKKAUS LOPPUU #}
+
+    {# KAUSI ALKAA #}
+
+    {% elif ag.fiscal_period_id is not none %}
+      <tr>
+        <form method="POST" action="{{ url_for('fiscalperiod_select_period', fiscalperiod_id=ag.fiscal_period_id) }}">
+          <td></td>
+          <td>{{ ag.fiscal_period_name }}</td>
+          <td>{{ ag.fiscal_period_startdate }}</td>
+          <td>{{ ag.fiscal_period_enddate }}</td>
+          {% if ag.fiscal_period_closed %}
+            <td class="text-danger">&#x1f512;</td>
+          {% else %}
+            <td class="text-success">&nbsp;</td>
+          {% endif %}
+          {% if ag.fiscal_period_locked %}
+            <td class="text-danger">&#x1f512;</td>
+          {% else %}
+            <td class="text-success">&nbsp;</td>
+          {% endif %}
+          <td>
+            <input type="submit" value="Muuta"/>
+          </td>
+          <td>
+              <input type="hidden" name="fiscalyear_id" value="{{ ag.fiscal_year_id }}">
+          </td>
+        </form>
+      </tr>
+    {% endif %}
+
+    {# KAUSI LOPPUU #}
+
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}
