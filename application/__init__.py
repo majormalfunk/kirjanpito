@@ -74,6 +74,9 @@ from application.domains import views
 # Ja kansion application/activities/ tiedostojen sisältö
 from application.activities import models
 from application.activities import views
+# Ja kansion application/documenttypes/ tiedostojen sisältö
+from application.documenttypes import models
+from application.documenttypes import views
 # Ja kansion application/fiscalperiods/ tiedostojen sisältö
 from application.fiscalperiods import models
 from application.fiscalperiods import views

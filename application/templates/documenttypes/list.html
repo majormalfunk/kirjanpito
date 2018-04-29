@@ -1,0 +1,177 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<div>
+  <table class="container-fluid">
+    <tr>
+      <th>Tositelaji</th>
+      <th>Tositelajin nimi</th>
+      <th>Kuvaus</th>
+      <th>K&auml;yt&ouml;ss&auml;</th>
+      <th></th>
+      <th>
+        {% if action == "FixNewDocumentType" %}
+          &nbsp;
+        {% else %}
+          <button class="btn btn-primary"
+                  type="button"
+                  data-toggle="collapse"
+                  data-target="#addDocumentType"
+                  aria-expanded="false"
+                  aria-controls="addDocumentType">
+                  &#x2b;
+          </button>
+        {% endif %}
+      </th>
+    </tr>
+
+    {# UUSI TOSITELAJI ALKAA #}
+
+    {% if action == "FixNewDocumentType" %}
+
+      <form method="POST" action="{{ url_for('documenttype_new_documenttype') }}">
+        <tr>
+          <td>{{ fixnewdocumenttypeform.doctype }}</td>
+          <td>{{ fixnewdocumenttypeform.name }}</td>
+          <td>{{ fixnewdocumenttypeform.description }}</td>
+          <td>{{ fixnewdocumenttypeform.inuse }}</td>
+          <td></td>
+          <td>
+            <input type="submit" value="Lis&auml;&auml;"/>
+          </td>
+        </tr>
+        {% if fixnewdocumenttypeform.doctype.errors %}
+        <tr>
+          <td></td>
+          <td colspan="5">
+            <ul>
+              {% for error in fixnewdocumenttypeform.doctype.errors %}
+              <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          </td>
+        </tr>
+        {% endif %}
+        {% if fixnewdocumenttypeform.name.errors %}
+        <tr>
+          <td></td>
+          <td colspan="5">
+            <ul>
+              {% for error in fixnewdocumenttypeform.name.errors %}
+              <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          </td>
+        </tr>
+        {% endif %}
+        {% if fixnewdocumenttypeform.description.errors %}
+        <tr>
+          <td></td>
+          <td colspan="5">
+            <ul>
+              {% for error in fixnewdocumenttypeform.description.errors %}
+              <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          </td>
+        </tr>
+        {% endif %}
+      </form>
+
+    {% else %}
+
+      <tr class="collapse" id="addDocumentType">
+        <form method="POST" action="{{ url_for('documenttype_new_documenttype') }}">
+          <td>{{ newdocumenttypeform.doctype }}</td>
+          <td>{{ newdocumenttypeform.name }}</td>
+          <td>{{ newdocumenttypeform.description }}</td>
+          <td>{{ newdocumenttypeform.inuse }}</td>
+          <td></td>
+          <td>
+            <input type="submit" value="Lis&auml;&auml;"/>
+          </td>
+        </form>
+      </tr>
+    {% endif %}
+
+    {# UUSI TOSITELAJI LOPPUU #}
+
+    {% for ag in documenttypes %}
+
+    {# TOSITELAJIN MUOKKAUS ALKAA #}
+
+      {% if (action == "EditDocumentType" and targetdocumenttype|int == ag.id|int) %}
+
+        <form method="POST" action="{{ url_for('documenttype_edit_documenttype', documenttype_id=targetdocumenttype) }}">
+          <tr>
+            <td>{{ editdocumenttypeform.doctype.data }}</td>
+            <td>{{ editdocumenttypeform.name }}</td>
+            <td>{{ editdocumenttypeform.description }}</td>
+            <td>{{ editdocumenttypeform.inuse }}</td>
+            <td>
+              <input type="hidden" id="doctype" name="doctype" value="{{ editdocumenttypeform.doctype.data }}">
+              <input type="hidden" id="id" name="id" value="{{ ag.id }}">
+            </td>
+            <td>
+              <input type="submit" name="action_update" value="Tallenna"/>
+              <input type="submit" name="action_delete" value="Poista"/>
+            </td>
+          </tr>
+          {% if editdocumenttypeform.name.errors %}
+          <tr>
+            <td></td>
+            <td colspan="5">
+              <ul>
+                {% for error in editdocumenttypeform.name.errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+              </ul>
+            </td>
+          </tr>
+          {% endif %}
+          {% if editdocumenttypeform.description.errors %}
+          <tr>
+            <td></td>
+            <td colspan="5">
+              <ul>
+                {% for error in editdocumenttypeform.description.errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+              </ul>
+            </td>
+          </tr>
+          {% endif %}
+        </form>
+
+      {% else %}
+
+        {# TOSITELAJI ALKAA #}
+
+        <form method="POST" action="{{ url_for('documenttype_select_documenttype', documenttype_id=ag.id) }}">
+          <tr>
+            <td>{{ ag.doctype }}</td>
+            <td>{{ ag.name }}</td>
+            <td>{{ ag.description }}</td>
+            {% if ag.inuse %}
+              <td class="text-success">&#x2713;</td>
+            {% else %}
+              <td class="text-danger">&#x2718;</td>
+            {% endif %}
+            <td>
+                <input type="submit" value="Muuta"/>
+            </td>
+            <td>&nbsp;</td>
+          </tr>
+        </form>
+        
+        {# TOSITELAJI LOPPUU #}
+
+      {% endif %}
+
+    {# TOSITELAJIN MUOKKAUS LOPPUU #}
+
+
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}
