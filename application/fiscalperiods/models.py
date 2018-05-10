@@ -62,3 +62,5 @@ class FiscalPeriod(TimeBased):
         self.locked = locked
         self.fiscalyear_id = fiscalyear_id
         self.entity_id = entity_id
+
+    

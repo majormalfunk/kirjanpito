@@ -1,0 +1,416 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<div>
+  <table class="container-fluid">
+    <tr>
+      <th style="width:20px">J&auml;rjestys</th>
+      <th style="width:20px">Toiminto</th>
+      <th style="width:20px">Kustannuspaikka</th>
+      <th>Nimi</th>
+      <th>Kuvaus</th>
+      <th style="width:20px">K&auml;yt&ouml;ss&auml;</th>
+      <th></th>
+      <th>
+        {% if action == "FixNewActivity" %}
+          &nbsp;
+        {% else %}
+          <button class="btn btn-primary"
+                  type="button"
+                  data-toggle="collapse"
+                  data-target="#addActivity"
+                  aria-expanded="false"
+                  aria-controls="addActivity">
+                  &#x2b;
+          </button>
+        {% endif %}
+      </th>
+    </tr>
+
+    {# UUSI TOIMINTO ALKAA #}
+
+    {% if action == "FixNewActivity" %}
+
+      <form method="POST" action="{{ url_for('activity_new_activity') }}">
+        <tr>
+          <td>{{ fixnewactivityform.orderer }}</td>
+          <td>{{ fixnewactivityform.code }}</td>
+          <td></td>
+          <td>{{ fixnewactivityform.name }}</td>
+          <td>{{ fixnewactivityform.description }}</td>
+          <td>{{ fixnewactivityform.inuse }}</td>
+          <td></td>
+          <td>
+            <input type="submit" value="Lis&auml;&auml; ryhm&auml;"/>
+          </td>
+        </tr>
+        {% if fixnewactivityform.orderer.errors %}
+        <tr>
+          <td></td>
+          <td colspan="7">
+            <ul>
+              {% for error in fixnewactivityform.orderer.errors %}
+              <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          </td>
+        </tr>
+        {% endif %}
+        {% if fixnewactivityform.code.errors %}
+        <tr>
+          <td></td>
+          <td colspan="7">
+            <ul>
+              {% for error in fixnewactivityform.code.errors %}
+              <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          </td>
+        </tr>
+        {% endif %}
+        {% if fixnewactivityform.name.errors %}
+        <tr>
+          <td></td>
+          <td colspan="7">
+            <ul>
+              {% for error in fixnewactivityform.name.errors %}
+              <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          </td>
+        </tr>
+        {% endif %}
+        {% if fixnewactivityform.description.errors %}
+        <tr>
+          <td></td>
+          <td colspan="7">
+            <ul>
+              {% for error in fixnewactivityform.description.errors %}
+              <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          </td>
+        </tr>
+        {% endif %}
+      </form>
+
+    {% else %}
+
+      <tr class="collapse" id="addActivity">
+        <form method="POST" action="{{ url_for('activity_new_activity') }}">
+          <td>{{ newactivityform.orderer }}</td>
+          <td>{{ newactivityform.code }}</td>
+          <td></td>
+          <td>{{ newactivityform.name }}</td>
+          <td>{{ newactivityform.description }}</td>
+          <td>{{ newactivityform.inuse }}</td>
+          <td></td>
+          <td>
+            <input type="submit" value="Lis&auml;&auml; ryhm&auml;"/>
+          </td>
+        </form>
+      </tr>
+    {% endif %}
+
+    {# UUSI TOIMINTO LOPPUU #}
+
+    {% set ns = namespace(preag=-1) %}
+    {% for ag in subjects %}
+    {% if ns.preag != ag.activity_id %}
+
+    {# TOIMINNON MUOKKAUS ALKAA #}
+
+      {% if (action == "EditActivity" and targetactivity|int == ag.activity_id|int) %}
+
+        <form method="POST" action="{{ url_for('activity_edit_activity', activity_id=targetactivity) }}">
+          <tr>
+            <td>{{ editactivityform.orderer }}</td>
+            <td></td>
+            <td>{{ editactivityform.code.data }}</td>
+            <td>{{ editactivityform.name }}</td>
+            <td>{{ editactivityform.description }}</td>
+            <td>{{ editactivityform.inuse }}</td>
+            <td>
+              <input type="hidden" id="code" name="code" value="{{ editactivityform.code.data }}">
+              <input type="hidden" id="id" name="id" value="{{ ag.activity_id }}">
+            </td>
+            <td>
+              <input type="submit" name="action_update" value="Tallenna"/>
+              <input type="submit" name="action_delete" value="Poista"/>
+            </td>
+          </tr>
+          {% if editactivityform.orderer.errors %}
+          <tr>
+            <td></td>
+            <td colspan="7">
+              <ul>
+                {% for error in editactivityform.orderer.errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+              </ul>
+            </td>
+          </tr>
+          {% endif %}
+          {% if editactivityform.name.errors %}
+          <tr>
+            <td></td>
+            <td colspan="7">
+              <ul>
+                {% for error in editactivityform.name.errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+              </ul>
+            </td>
+          </tr>
+          {% endif %}
+          {% if editactivityform.description.errors %}
+          <tr>
+            <td></td>
+            <td colspan="7">
+              <ul>
+                {% for error in editactivityform.description.errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+              </ul>
+            </td>
+          </tr>
+          {% endif %}
+        </form>
+
+      {% else %}
+
+        {# TOIMINTO ALKAA #}
+
+        <form method="POST" action="{{ url_for('activity_select_activity', activity_id=ag.activity_id) }}">
+          <tr class="list-group_item list-group-item-primary">
+            <td>{{ ag.activity_orderer }}</td>
+            <td>{{ ag.activity_code }}</td>
+            <td>&nbsp;</td>
+            <td>{{ ag.activity_name }}</td>
+            <td>{{ ag.activity_description }}</td>
+            {% if ag.activity_inuse %}
+              <td class="text-success">&#x2713;</td>
+            {% else %}
+              <td class="text-danger">&#x2718;</td>
+            {% endif %}
+            <td>
+                <input type="submit" value="Muuta"/>
+            </td>
+            <td>
+              <button class="btn btn-primary"
+                type="button"
+                data-toggle="collapse"
+                data-target="#addDomainToActivity{{ ag.activity_id }}"
+                aria-expanded="false"
+                aria-controls="addDomainToActivity{{ ag.activity_id }}">
+                &#x2b;
+              </button>
+            </td>
+          </tr>
+        </form>
+        
+        {# TOIMINTO LOPPUU #}
+
+      {% endif %}
+
+    {# TOIMINNON MUOKKAUS LOPPUU #}
+
+    {# UUSI KUSTANNUSPAIKKA ALKAA #}
+
+      {% if (action == "FixNewDomain" and targetactivity|int == ag.activity_id|int) %}
+
+        <tr class="list-group_item list-group-item-secondary">
+          <td>{{ fixnewdomainform.orderer.label }}</td>
+          <td></td>
+          <td>{{ fixnewdomainform.code.label }}</td>
+          <td>{{ fixnewdomainform.name.label }}</td>
+          <td>{{ fixnewdomainform.description.label }}</td>
+          <td>{{ fixnewdomainform.inuse.label }}</td>
+          <td><!-- sarake 6 --></td>
+          <td>&nbsp;</td>
+        </tr>
+        <form method="POST" action="{{ url_for('activity_new_domain', activity_id=ag.activity_id) }}">
+          <tr>
+            <td>{{ fixnewdomainform.orderer }}</td>
+            <td></td>
+            <td>{{ fixnewdomainform.code }}</td>
+            <td>{{ fixnewdomainform.name }}</td>
+            <td>{{ fixnewdomainform.description }}</td>
+            <td>{{ fixnewdomainform.inuse }}</td>
+            <td>
+              <input type="hidden" name="activity_id" value="{{ ag.activity_id }}">
+            </td>
+            <td>
+              <input type="submit" value="Lis&auml;&auml; tili"/>
+            </td>
+          </tr>
+          {% if fixnewdomainform.orderer.errors %}
+          <tr>
+            <td></td>
+            <td colspan="7">
+              <ul>
+                {% for error in fixnewdomainform.orderer.errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+              </ul>
+            </td>
+          </tr>
+          {% endif %}
+          {% if fixnewdomainform.code.errors %}
+          <tr>
+            <td></td>
+            <td colspan="7">
+              <ul>
+                {% for error in fixnewdomainform.code.errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+              </ul>
+            </td>
+          </tr>
+          {% endif %}
+          {% if fixnewdomainform.name.errors %}
+          <tr>
+            <td></td>
+            <td colspan="7">
+              <ul>
+                {% for error in fixnewdomainform.name.errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+              </ul>
+            </td>
+          </tr>
+          {% endif %}
+          {% if fixnewdomainform.description.errors %}
+          <tr>
+            <td></td>
+            <td colspan="7">
+              <ul>
+                {% for error in fixnewdomainform.description.errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+              </ul>
+            </td>
+          </tr>
+          {% endif %}
+        </form>
+
+      {% else %}
+
+        <form method="POST" action="{{ url_for('activity_new_domain', activity_id=ag.activity_id) }}">
+          <tr class="collapse" id="addDomainToActivity{{ ag.activity_id }}">
+            <td>{{ newdomainform.orderer }}</td>
+            <td></td>
+            <td>{{ newdomainform.code }}</td>
+            <td>{{ newdomainform.name }}</td>
+            <td>{{ newdomainform.description }}</td>
+            <td>{{ newdomainform.inuse }}</td>
+            <td>
+              <input type="hidden" name="activity_id" value="{{ ag.activity_id }}">
+            </td>
+            <td>
+              <input type="submit" value="Lis&auml;&auml; tili"/>
+            </td>
+          </tr>
+        </form>
+
+      {% endif %}
+
+      {# UUSI KUSTANNUSPAIKKA LOPPUU #}
+
+    {% endif %}
+    {% set ns.preag = ag.activity_id %}
+
+    {# KUSTANNUSPAIKAN MUOKKAUS ALKAA #}
+
+    {% if (action == "EditDomain" and
+          targetactivity|int == ag.activity_id|int and targetdomain|int == ag.domain_id|int) %}
+
+      <form method="POST" action="{{ url_for('activity_edit_domain', domain_id=editdomainform.id.data) }}">
+        <tr>
+          <td>{{ editdomainform.orderer }}</td>
+          <td></td>
+          <td>{{ editdomainform.code.data }}</td>
+          <td>{{ editdomainform.name }}</td>
+          <td>{{ editdomainform.description }}</td>
+          <td>{{ editdomainform.inuse }}</td>
+          <td>
+              <input type="hidden" id="id" name="id" value="{{ editdomainform.id.data }}">
+              <input type="hidden" id="code" name="code" value="{{ editdomainform.code.data }}">
+              <input type="hidden" id="activity_id" name="activity_id" value="{{ ag.activity_id }}">
+          </td>
+          <td>
+              <input type="submit" name="action_update" value="Tallenna"/>
+              <input type="submit" name="action_delete" value="Poista"/>
+          </td>
+        </tr>
+        {% if editdomainform.orderer.errors %}
+        <tr>
+          <td></td>
+          <td colspan="7">
+            <ul>
+              {% for error in editdomainform.orderer.errors %}
+              <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          </td>
+        </tr>
+        {% endif %}
+        {% if editdomainform.name.errors %}
+        <tr>
+          <td></td>
+          <td colspan="7">
+            <ul>
+              {% for error in editdomainform.name.errors %}
+              <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          </td>
+        </tr>
+        {% endif %}
+        {% if editdomainform.description.errors %}
+        <tr>
+          <td></td>
+          <td colspan="7">
+            <ul>
+              {% for error in editdomainform.description.errors %}
+              <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          </td>
+        </tr>
+        {% endif %}
+      </form>
+
+    {# KUSTANNUSPAIKAN MUOKKAUS LOPPUU #}
+
+    {# KUSTANNUSPAIKKA ALKAA #}
+
+    {% elif ag.domain_id is not none %}
+      <tr>
+        <form method="POST" action="{{ url_for('activity_select_domain', domain_id=ag.domain_id) }}">
+          <td>{{ ag.domain_orderer }}</td>
+          <td></td>
+          <td>{{ ag.domain_code }}</td>
+          <td>{{ ag.domain_name }}</td>
+          <td>{{ ag.domain_description }}</td>
+          {% if ag.domain_inuse %}
+            <td class="text-success">&#x2713;</td>
+          {% else %}
+            <td class="text-danger">&#x2718;</td>
+          {% endif %}
+          <td>
+            <input type="submit" value="Muuta"/>
+          </td>
+          <td>
+              <input type="hidden" name="activity_id" value="{{ ag.activity_id }}">
+          </td>
+        </form>
+      </tr>
+    {% endif %}
+
+    {# KUSTANNUSPAIKKA LOPPUU #}
+
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}

@@ -219,7 +219,7 @@
             <td colspan="6">
               <ul>
                 {% for error in fixnewaccountform.number.errors %}
-                <li>{{ fixnewaccountform.number.label }} {{ error }}</li>
+                <li>{{ error }}</li>
                 {% endfor %}
               </ul>
             </td>
@@ -231,7 +231,7 @@
             <td colspan="6">
               <ul>
                 {% for error in fixnewaccountform.name.errors %}
-                <li>{{ fixnewaccountform.name.label }} {{ error }}</li>
+                <li>{{ error }}</li>
                 {% endfor %}
               </ul>
             </td>
@@ -243,7 +243,7 @@
             <td colspan="6">
               <ul>
                 {% for error in fixnewaccountform.description.errors %}
-                <li>{{ fixnewaccountform.description.label }} {{ error }}</li>
+                <li>{{ error }}</li>
                 {% endfor %}
               </ul>
             </td>

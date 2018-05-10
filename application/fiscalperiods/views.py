@@ -1,3 +1,6 @@
+from datetime import timedelta
+from datetime import date
+
 from flask import redirect, render_template, request, url_for
 from flask_login import current_user
 
@@ -46,20 +49,54 @@ def fiscalperiod_new_year():
 
     print("Yritetään tallentaa tietokantaan")
 
-    year = FiscalYear(fiscalyearform.name.data,
+    newyear = FiscalYear(fiscalyearform.name.data,
                     fiscalyearform.startdate.data,
                     fiscalyearform.enddate.data,
                     fiscalyearform.closed.data,
                     fiscalyearform.locked.data,
                     current_user.get_entity_id())
     try:
-        db.session().add(year)
+        db.session().add(newyear)
         db.session().commit()
-        print("Tallennus onnistui")
+        print("Tilikauden " + newyear.name + " tallennus onnistui")
+
     except:
         ## TÄHÄN VIRHETILANTEEN KÄSITTELY
         print("Tapahtui virhe lisättäessä tilikautta tietokantaan")
         pass
+
+    ## LISÄTÄÄN TILIKAUDELLE OLETUSJAKSOT
+    periodstart = newyear.startdate
+    periodend = newyear.enddate
+    for p in range(newyear.startdate.month, newyear.enddate.month+1):
+        periodname = str(p)
+        periodstart = date(newyear.startdate.year, p, 1)
+        if p == 12:
+            periodend = newyear.enddate
+        else:
+            periodtemp = date(newyear.startdate.year, p+1, 1)
+            periodend = periodtemp + timedelta(-1)
+        if p < 10:
+            periodname = "0" + periodname
+        periodname = newyear.name + periodname
+        ##print(periodname + " : " + str(periodstart) + " -> " + str(periodend))
+        newperiod = FiscalPeriod(periodname,
+                periodstart,
+                periodend,
+                newyear.closed,
+                newyear.locked,
+                newyear.id,
+                current_user.get_entity_id())
+
+        try:
+            db.session().add(newperiod)
+            db.session().commit()
+            print("Jakson " + newperiod.name + " tallennus onnistui")
+
+        except:
+            ## TÄHÄN VIRHETILANTEEN KÄSITTELY
+            print("Tapahtui virhe lisättäessä tilikautta tietokantaan")
+            pass
 
     return redirect(url_for("fiscalperiods_index"))
 
@@ -254,7 +291,6 @@ def fiscalperiod_edit_period(fiscalperiod_id):
             pass
 
     return redirect(url_for("fiscalperiods_index"))
-
 
 
 
