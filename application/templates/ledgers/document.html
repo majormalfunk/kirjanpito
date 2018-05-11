@@ -1,6 +1,18 @@
 {% extends "layout.html" %}
   
 {% block body %}
+
+<form method="POST" action="{{ url_for('ledgers_index') }}">
+<table>
+  <td>
+      <input type="hidden" name="ledgerdocument" value="-1"/> 
+      <input type="submit" name="back_to_ledgers_index" value="Palaa"/>
+  </td>
+</table>
+</form>
+
+{# TOSITTEEN TIEDOT ALKAA #}
+
 {% if (action == "NewLedgerDocument") %}
   <form method="POST" action="{{ url_for('ledgers_savenew_document') }}">
 {% else %}
@@ -76,4 +88,263 @@
     </tr>
   </table>
 </form>
+
+{# TOSITTEEN TIEDOT LOPPUU #}
+
+{# TOSITERIVIT ALKAA #}
+
+
+
+    <table class="container-fluid">
+      <tr>
+        <th>Tili</th>
+        <th>Debet</th>
+        <th>Kredit</th>
+        <th>Selite</th>
+        <th>Kustannuspaikka</th>
+        <th>
+          {% if action == "FixNewLedgerRow" %}
+            &nbsp;
+          {% else %}
+            <button class="btn btn-primary"
+                    type="button"
+                    data-toggle="collapse"
+                    data-target="#addLedgerRow"
+                    aria-expanded="false"
+                    aria-controls="addLedgerRow">
+                    &#x2b;
+            </button>
+          {% endif %}
+        </th>
+      </tr>
+  
+      {# UUSI TOSITERIVI ALKAA #}
+  
+      {% if action == "FixNewLedgerRow" %}
+  
+      <form method="POST" action="{{ url_for('ledgers_record_ledgerrow', ledgerdocument_id=ledgerdocumentform.id.data) }}">
+          <tr>
+            <td>
+              <select name="account_id" id="account_id">
+                {% for account in accounts %}
+                  <option value="{{ account.id }}"{% if (fixnewledgerrowform.account_id == account.id) %} selected {% endif %}>
+                    {{ account.number }} {{ account.name }}
+                  </option>
+                {% endfor %}
+              </select>
+            </td>
+            <td>{{ fixnewledgerrowform.debit }}</td>
+            <td>{{ fixnewledgerrowform.credit }}</td>
+            <td>{{ fixnewledgerrowform.description }}</td>
+            <td>
+                <select name="domain_id" id="domain_id">
+                  {% for domain in domains %}
+                    <option value="{{ domain.id }}"{% if (fixnewledgerrowform.domain_id == domain.id) %} selected {% endif %}>
+                      {{ domain.code }} {{ domain.name }}
+                    </option>
+                  {% endfor %}
+                </select>
+              </td>
+              <td></td>
+            <td>
+              <input type="hidden" id="ledgerdocument_id" name="ledgerdocument_id" value="{{ ledgerdocumentform.id.data }}">
+              <input type="submit" value="Lis&auml;&auml;"/>
+            </td>
+          </tr>
+          {% if fixnewledgerrowform.debit.errors %}
+          <tr>
+            <td></td>
+            <td colspan="5">
+              <ul>
+                {% for error in fixnewledgerrowform.debit.errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+              </ul>
+            </td>
+          </tr>
+          {% endif %}
+          {% if fixnewledgerrowform.credit.errors %}
+          <tr>
+            <td></td>
+            <td colspan="5">
+              <ul>
+                {% for error in fixnewledgerrowform.credit.errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+              </ul>
+            </td>
+          </tr>
+          {% endif %}
+          {% if fixnewledgerrowform.description.errors %}
+          <tr>
+            <td></td>
+            <td colspan="5">
+              <ul>
+                {% for error in fixnewledgerrowform.description.errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+              </ul>
+            </td>
+          </tr>
+          {% endif %}
+        </form>
+  
+      {% else %}
+        {% if (action != "NewLedgerDocument") %}
+        <tr class="collapse" id="addLedgerRow">
+          <form method="POST" action="{{ url_for('ledgers_record_ledgerrow', ledgerdocument_id=ledgerdocumentform.id.data) }}">
+              <td>
+                  <select name="account_id" id="account_id">
+                    {% for account in accounts %}
+                      <option value="{{ account.id }}"
+                        {% if (newledgerrowform.account_id == account.id) %} selected {% endif %}>
+                        {{ account.number }} {{ account.name }}
+                      </option>
+                    {% endfor %}
+                  </select>
+                </td>
+                <td>{{ newledgerrowform.debit }}</td>
+            <td>{{ newledgerrowform.credit }}</td>
+            <td>{{ newledgerrowform.description }}</td>
+            <td>
+                <select name="domain_id" id="domain_id">
+                  {% for domain in domains %}
+                    <option value="{{ domain.id }}"{% if (newledgerrowform.domain_id == domain.id) %} selected {% endif %}>
+                      {{ domain.code }} {{ domain.name }}
+                    </option>
+                  {% endfor %}
+                </select>
+              </td>
+            <td>
+              <input type="hidden" id="ledgerdocument_id" name="ledgerdocument_id" value="{{ ledgerdocumentform.id.data }}">
+              <input type="submit" value="Lis&auml;&auml;"/>
+            </td>
+          </form>
+        </tr>
+          {% endif %}
+      {% endif %}
+  
+      {# UUSI TOSITERIVI LOPPUU #}
+  
+      {% for lr in ledgerrows %}
+
+      {# TOSITERIVIN MUOKKAUS ALKAA #}
+  
+        {% if (action == "EditLedgerRow" and targetledgerrow|int == lr.id|int) %}
+  
+          <form method="POST" action="{{ url_for('ledgers_edit_ledgerrow', ledgerrow_id=targetledgerrow) }}">
+            <tr>
+              <td>
+                  <select name="account_id" id="account_id">
+                    {% for account in accounts %}
+                      <option value="{{ account.id }}"
+                        {% if (editledgerrowform.account_id == account.id) %} selected {% endif %}>
+                        {{ account.number }} {{ account.name }}
+                      </option>
+                    {% endfor %}
+                  </select>
+                </td>
+              <td>{{ editledgerrowform.debit }}</td>
+              <td>{{ editledgerrowform.credit }}</td>
+              <td>{{ editledgerrowform.description }}</td>
+              <td>
+                  <select name="domain_id" id="domain_id">
+                    {% for domain in domains %}
+                      <option value="{{ domain.id }}"{% if (editledgerrowform.domain_id == domain.id) %} selected {% endif %}>
+                        {{ domain.code }} {{ domain.name }}
+                      </option>
+                    {% endfor %}
+                  </select>
+                </td>
+                <td>
+                <input type="hidden" id="id" name="id" value="{{ lr.id }}">
+                <input type="hidden" id="ledgerdocument_id" name="ledgerdocument_id" value="{{ lr.ledgerdocument_id }}">
+                <input type="submit" name="action_update" value="Tallenna"/>
+                <input type="submit" name="action_delete" value="Poista"/>
+              </td>
+            </tr>
+            {% if editledgerrowform.debit.errors %}
+            <tr>
+              <td></td>
+              <td colspan="5">
+                <ul>
+                  {% for error in editledgerrowform.debit.errors %}
+                  <li>{{ error }}</li>
+                  {% endfor %}
+                </ul>
+              </td>
+            </tr>
+            {% endif %}
+            {% if editledgerrowform.credit.errors %}
+            <tr>
+              <td></td>
+              <td colspan="5">
+                <ul>
+                  {% for error in editledgerrowform.credit.errors %}
+                  <li>{{ error }}</li>
+                  {% endfor %}
+                </ul>
+              </td>
+            </tr>
+            {% endif %}
+            {% if editledgerrowform.description.errors %}
+            <tr>
+              <td></td>
+              <td colspan="5">
+                <ul>
+                  {% for error in editledgerrowform.description.errors %}
+                  <li>{{ error }}</li>
+                  {% endfor %}
+                </ul>
+              </td>
+            </tr>
+            {% endif %}
+          </form>
+  
+        {% else %}
+  
+          {# TOSITERIVI ALKAA #}
+  
+          <form method="POST" action="{{ url_for('ledgers_select_ledgerrow', ledgerrow_id=lr.id) }}">
+            <tr>
+              <td>
+                {% for account in accounts %}
+                  {% if (lr.account_id == account.id) %}{{ account.number }}{% endif %}
+                {% endfor %}
+              </td>
+              {% if (lr.amount > 0) %}
+                <td>{{ lr.amount }}</td>
+                <td>&nbsp;</td>
+              {% else %}
+                <td>&nbsp;</td>
+                <td>{{ lr.amount*(-1) }}</td>
+              {% endif %}
+              <td>{{ lr.description }}</td>
+              <td>
+                  {% for domain in domains %}
+                    {% if (lr.domain_id == domain.id) %}{{ domain.code }}{% endif %}
+                  {% endfor %}
+                </td>
+                <td>
+                  <input type="hidden" id="ledgerdocument_id" name="ledgerdocument_id" value="{{ lr.ledgerdocument_id }}">
+                  <input type="submit" value="Muuta"/>
+              </td>
+              <td>&nbsp;</td>
+            </tr>
+          </form>
+          
+          {# TOSITERIVI LOPPUU #}
+  
+        {% endif %}
+  
+      {# TOSITERIVIN MUOKKAUS LOPPUU #}
+  
+  
+      {% endfor %}
+    </table>
+
+
+
+{# TOSITERIVIT LOPPUU #}
+
 {% endblock %}

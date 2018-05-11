@@ -18,13 +18,19 @@ class LedgerDocumentForm(FlaskForm):
 class LedgerRowForm(FlaskForm):
     id = IntegerField("Tunnus")
     account_id = IntegerField("Tili")
-    debet = DecimalField("Debet", places=2, rounding=None, use_locale=True, number_format=None)
-    kredit = DecimalField("Debet", places=2, rounding=None, use_locale=True, number_format=None)
-    activity_id = IntegerField("Toiminnon tunnus")
+    debit = IntegerField("Debet", [validators.NumberRange(min=0, message="Debet ei saa olla negatiivinen")])
+    credit = IntegerField("Kredit", [validators.NumberRange(min=0, message="Kredit ei saa olla negatiivinen")])
     domain_id = IntegerField("Kustannuspaikan tunnus")
     description = StringField("Kuvaus", [validators.Length(max=255, message="Kuvauksen pituus saa olla enintää 255")])
     recorded_by = StringField("Käsittelijä")
     ledgerdocument_id = IntegerField("Tosite")
+
+    def fixAmounts(self):
+        print("Fixing amounts!")
+        if self.debit.data == None:
+            self.debit.data = int(0)
+        if self.credit.data == None:
+            self.credit.data = int(0)
 
     class Meta:
         csrf = False

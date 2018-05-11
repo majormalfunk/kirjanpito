@@ -31,8 +31,10 @@ class LedgerDocument(Base):
         stmt = text("SELECT " +
             "ld.id, ld.documenttype_id, dt.doctype, ld.documentnumber, " +
             "ld.ledgerdate, fy.name, fp.name, " +
-            "ld.description, ld.recorded_by, ld.approved_by, ld.entity_id " +
+            "ld.description, ld.recorded_by, ld.approved_by, ld.entity_id, " +
+            "SUM(lr.amount) AS amount " +
             "FROM ledger_document ld, document_type dt, fiscal_year fy, fiscal_period fp " +
+            "LEFT JOIN ledger_row lr on ld.id = lr.ledgerdocument_id  " +
             "WHERE dt.id = ld.documenttype_id " +
             "AND ld.ledgerdate >= fp.startdate AND ld.ledgerdate <= fp.enddate " +
             "AND fy.id = fp.fiscalyear_id " +  
@@ -42,6 +44,10 @@ class LedgerDocument(Base):
             "AND fp.entity_id = ld.entity_id " + 
             "AND (fy.id = :fiscalyear_id OR :fiscalyear_id is null) " + 
             "AND (fp.id = :fiscalperiod_id OR :fiscalperiod_id is null) " + 
+            "GROUP BY " +
+            "ld.id, ld.documenttype_id, dt.doctype, ld.documentnumber, " +
+            "ld.ledgerdate, fy.name, fp.name, " +
+            "ld.description, ld.recorded_by, ld.approved_by, ld.entity_id " +
             "ORDER BY ld.ledgerdate DESC, dt.doctype ASC, ld.documentnumber ASC").params(
                 entity_id=entity_id, fiscalyear_id=fiscalyear_id, fiscalperiod_id=fiscalperiod_id)
         res = db.engine.execute(stmt)
@@ -58,7 +64,8 @@ class LedgerDocument(Base):
                             "description":row[7],
                             "recorded_by":row[8],
                             "approved_by":row[9],
-                            "entity_id":row[10]})
+                            "entity_id":row[10],
+                            "amount":row[11]})
         return response
 
     @staticmethod
@@ -82,7 +89,6 @@ class LedgerRow(Base):
     ledgerdocument_id = db.Column(db.Integer, db.ForeignKey("ledger_document.id"), nullable = False)
     account_id = db.Column(db.Integer, db.ForeignKey("account.id"), nullable = False)
     amount = db.Column(db.Integer, nullable=False)
-    activity_id = db.Column(db.Integer, db.ForeignKey("activity.id"), nullable = False)
     domain_id = db.Column(db.Integer, db.ForeignKey("domain.id"), nullable = False)
     description = db.Column(db.String(255), nullable=False)
     recorded_by = db.Column(db.String(144), nullable = False)
@@ -90,12 +96,12 @@ class LedgerRow(Base):
     entity_id = db.Column(db.Integer, db.ForeignKey("entity.id"), nullable = False)
 
     def __init__(self, ledgerdocument_id, account_id, amount,
-                    activity_id, domain_id, description, recorded_by, entity_id):
+                    domain_id, description, recorded_by, entity_id):
         self.ledgerdocument_id = ledgerdocument_id
         self.account_id = account_id
         self.amount = amount
-        self.activity_id = activity_id
         self.domain_id = domain_id
         self.description = description
         self.recorded_by = recorded_by
         self.entity_id = entity_id
+

@@ -24,7 +24,11 @@
 
         <form method="POST" action="{{ url_for('ledgers_document', ledgerdocument_id=ag.id) }}">
           <tr>
-            <td></td>
+            {% if (ag.amount is not none and ag.amount|int == 0) %}
+              <td class="text-success">&#x2713;</td>
+            {% else %}
+              <td class="text-danger">&#x2718;</td>
+            {% endif %}
             {% if ag.approved_by %}
               <td class="text-success">&#x2713;</td>
             {% else %}

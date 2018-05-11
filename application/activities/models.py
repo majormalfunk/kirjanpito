@@ -9,7 +9,6 @@ class Activity(Descriptive):
     entity_id = db.Column(db.Integer, db.ForeignKey("entity.id"), nullable = False)
 
     domains = db.relationship("Domain", backref='activity_domains', lazy=True)
-    ledgerrows = db.relationship("LedgerRow", backref='activity_ledgerrows', lazy=True)
 
     __table_args__ = (UniqueConstraint('code', 'entity_id', name='activity_entity_uc'),)
 

@@ -76,11 +76,14 @@ def auth_login():
     form = LoginForm(request.form)
     # mahdolliset validoinnit
 
-    user = UserAccount.query.filter_by(username=form.username.data).first()
-    if not pbkdf2_sha256.verify(form.password.data, user.password):
-        return render_template("auth/loginform.html", form = form,
+    try:
+        user = UserAccount.query.filter_by(username=form.username.data).first()
+        if not pbkdf2_sha256.verify(form.password.data, user.password):
+            return render_template("auth/loginform.html", form = form,
                                error = "Väärä käyttäjätunnus tai salasana")
-
+    except:
+        return render_template("auth/loginform.html", form = LoginForm(),
+                               error = "Väärä käyttäjätunnus tai salasana")
 
     print("Käyttäjä " + user.name + " tunnistettiin")
     login_user(user)
