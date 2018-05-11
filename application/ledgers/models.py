@@ -33,8 +33,9 @@ class LedgerDocument(Base):
             "ld.ledgerdate, fy.name, fp.name, " +
             "ld.description, ld.recorded_by, ld.approved_by, ld.entity_id, " +
             "SUM(lr.amount) AS amount " +
-            "FROM ledger_document ld, document_type dt, fiscal_year fy, fiscal_period fp " +
-            "LEFT JOIN ledger_row lr on ld.id = lr.ledgerdocument_id  " +
+            "FROM ledger_document ld " +
+            "LEFT JOIN ledger_row lr on lr.ledgerdocument_id = ld.id, " +
+            "document_type dt, fiscal_year fy, fiscal_period fp " +
             "WHERE dt.id = ld.documenttype_id " +
             "AND ld.ledgerdate >= fp.startdate AND ld.ledgerdate <= fp.enddate " +
             "AND fy.id = fp.fiscalyear_id " +  
