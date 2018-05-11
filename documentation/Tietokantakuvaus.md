@@ -11,6 +11,7 @@ Entity_id löytyy tässä joka taulusta, jotta kyselyt on helpompi toteuttaa ja 
 
 ### Taulujen luontilauseet:
 
+'''
 CREATE TABLE entity (
 	id INTEGER NOT NULL, 
 	date_created DATETIME, 
@@ -176,3 +177,4 @@ CREATE TABLE ledger_row (
 	FOREIGN KEY(domain_id) REFERENCES domain (id), 
 	FOREIGN KEY(entity_id) REFERENCES entity (id)
 );
+'''
