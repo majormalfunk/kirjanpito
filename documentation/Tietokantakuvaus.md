@@ -1,9 +1,8 @@
 ## Tietokantakuvaus
 
-Kuvaus on vielä kesken. Kuvauksesta puuttuu mm. tositteiden hyväksyntään tarvittavat taulut ja sarakkeet tauluista.
-Lisäksi entity_id:llä on tässä toteutettu eri toimijoiden erottaminen toisistaan. Lopulliseen versioon tulee valita toteutustapa.
-Etuna kaikkiin tauluihin laitettavalla entity_id:llä on se, että pystytään varmemmin ja nopeammin poimimaan vain käsiteltävän
-toimijan kirjanpito. Toisaalta foreign key -viittaus jokaisessa taulussa voi hidastaa toimintaa. Onko näin?
+Tietokantakuvaus on päivitetty.
+
+Entity_id löytyy tässä joka taulusta, jotta kyselyt on helpompi toteuttaa ja koska siten on helpompi varmistaa, ettei eri toimijoinden tiedot mene keskenään sekaisin vaikka toimitaan yhdessä tietokannassa. Lisäksi etuna kaikkiin tauluihin laitettavalla entity_id:llä on se, että pystytään varmemmin ja nopeammin poimimaan vain käsiteltävän toimijan kirjanpito. Toisaalta foreign key -viittaus jokaisessa taulussa voi hidastaa toimintaa.
 
 ### Tietokantakaavio:
 
