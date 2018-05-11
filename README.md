@@ -18,7 +18,7 @@ En aikataulun rajoitteiden vuoksi päässyt edes aloittamaan raporttien tekemist
 
 Valitsemani aihe oli varmaankin turhan laaja näin lyhyessä ajassa toteutettavaksi varsinkin, kun työvälineistä oli iso osa ennestään tuntemattomia minulle. Voi olla, että tutummilla välineillä olisin päässyt paljon pitemmälle. Tällä kokoonpanolla kulutin hyvin paljon aikaa hyvinkin pienien toimintojen aikaansaamiseksi. Osittain ongelmia tuli uuden ohjelmointikielen syntaksin kanssa mutta ehkä enemmän päänvaivaa aiheutti kaikki muut minulle uudet välineet (wtforms, jinja, sqlalchemy jne). Niiden kanssa saatoi hukata tuntikausia ihmetellen minkä takia en saa tietorakenteessa olevaa tietoa käyttööni vaikka se siellä selvästi olikin.
 
-Ajantasaiset käyttötapaukset ja tietokantakuvaus löytyy alla olevien linkkien takaa.
+Ajantasaiset käyttötapaukset ja tietokantakuvaus löytyy alla olevien linkkien takaa. Itse sovelluksessa on muutama neuvo käyttöönottoon.
 
 [Käyttötapaukset](https://github.com/majormalfunk/kirjanpito/blob/master/documentation/kayttotapaukset)
 
