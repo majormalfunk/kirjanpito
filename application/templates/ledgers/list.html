@@ -12,9 +12,11 @@
       <th>Selite</th>
       <th>&nbsp;</th>
       <th>
+        {% if userrole == "admin" %}
           <form method="POST" action="{{ url_for('ledgers_recordnew_document') }}">
             <input class="btn btn-primary" type="submit" value="&#x2b;"/>
           </form>
+        {% endif %}
       </th>
     </tr>
 
@@ -39,7 +41,7 @@
             <td>{{ ag.documentnumber }}</td>
             <td>{{ ag.description }}</td>
             <td>
-                <input type="submit" value="Muuta"/>
+                <input type="submit" value="Valitse"/>
             </td>
             <td>&nbsp;</td>
           </tr>

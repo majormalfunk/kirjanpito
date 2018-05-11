@@ -2,21 +2,35 @@
   
 {% block body %}
 
-<form method="POST" action="{{ url_for('ledgers_index') }}">
 <table>
-  <td>
-      <input type="hidden" name="ledgerdocument" value="-1"/> 
+  <tr>
+    <td>
+      <form method="POST" action="{{ url_for('ledgers_index') }}">
+            <input type="hidden" name="ledgerdocument" value="-1"/> 
       <input type="submit" name="back_to_ledgers_index" value="Palaa"/>
-  </td>
+    </form>
+    </td>
+    <td colspan="4"></td>
+    <td>
+        {% if (userrole == "approved" and ledgerdocumentform.approved_by.data is not none ) %}
+        <form method="POST" action="{{ url_for('ledgers_approve', ledgerdocument_id=ledgerdocumentform.id.data) }}">
+          <input type="submit" name="approve_document" value="Hyväksy"/>
+        </form>
+        {% endif %}
+    </td>
+  </tr>
 </table>
-</form>
 
-{# TOSITTEEN TIEDOT ALKAA #}
+
+    {# TOSITTEEN TIEDOT ALKAA #}
+{% if (userrole == "admin" and ledgerdocumentform.approved_by.data is not none) %}
 
 {% if (action == "NewLedgerDocument") %}
   <form method="POST" action="{{ url_for('ledgers_savenew_document') }}">
 {% else %}
   <form method="POST" action="{{ url_for('ledgers_edit_document', ledgerdocument_id=ledgerdocumentform.id.data) }}">
+{% endif %}
+
 {% endif %}
   <table>
     <tr>
@@ -24,14 +38,19 @@
         {{ ledgerdocumentform.documenttype_id.label }}
       </td>
       <td>
-          <select name="documenttype_id" id="documenttype_id">
+          <select name="documenttype_id" id="documenttype_id"
+            {% if (userrole != "admin" or ledgerdocumentform.approved_by.data is not none) %} disabled{% endif %}>
             {% for documenttype in documenttypes %}
-              <option value="{{ documenttype.id }}"
+            <option value="{{ documenttype.id }}"
                 {% if (ledgerdocumentform.documenttype_id == documenttype.id) %} selected {% endif %}>
                 {{ documenttype.doctype }} {{ documenttype.name }}
               </option>
+
             {% endfor %}
           </select>
+
+
+
       </td>
       {% if (action == "NewLedgerDocument") %}
       <td colspan="6">&nbsp;</td>
@@ -69,20 +88,30 @@
         {{ ledgerdocumentform.ledgerdate.label }}
       </td>
       <td>
+        {% if (userrole != "admin" or ledgerdocumentform.approved_by.data is not none) %}
+        {{ ledgerdocumentform.ledgerdate.data }}
+        {% else %}
         {{ ledgerdocumentform.ledgerdate }}
+        {% endif %}
       </td>
       <td>
         {{ ledgerdocumentform.description.label }}
       </td>
       <td colspan="4">
-        {{ ledgerdocumentform.description }}
-      </td>
+          {% if (userrole != "admin" or ledgerdocumentform.approved_by.data is not none) %}
+          {{ ledgerdocumentform.description.data }}
+          {% else %}
+          {{ ledgerdocumentform.description }}
+          {% endif %}
+        </td>
       <td>
-        {% if (action == "NewLedgerDocument") %}
+          {% if (userrole == "admin" and ledgerdocumentform.approved_by.data is none) %}
+          {% if (action == "NewLedgerDocument") %}
           <input type="submit" value="Tallenna"/>
         {% else %}
           <input type="submit" name="action_update" value="Tallenna"/>
           <input type="submit" name="action_delete" value="Poista"/>
+        {% endif %}
         {% endif %}
       </td>
     </tr>
@@ -103,7 +132,7 @@
         <th>Selite</th>
         <th>Kustannuspaikka</th>
         <th>
-          {% if action == "FixNewLedgerRow" %}
+          {% if (action == "FixNewLedgerRow" or userrole != "admin" or ledgerdocumentform.approved_by.data is not none) %}
             &nbsp;
           {% else %}
             <button class="btn btn-primary"
@@ -326,8 +355,10 @@
                   {% endfor %}
                 </td>
                 <td>
+                  {% if (userrole == "admin" and ledgerdocumentform.approved_by.data is none) %}
                   <input type="hidden" id="ledgerdocument_id" name="ledgerdocument_id" value="{{ lr.ledgerdocument_id }}">
                   <input type="submit" value="Muuta"/>
+                  {% endif %}
               </td>
               <td>&nbsp;</td>
             </tr>

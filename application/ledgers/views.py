@@ -14,7 +14,7 @@ from application.domains.models import Domain
 ## PERUSREITTI
 ##
 @app.route("/ledgers", methods=["GET", "POST"])
-@login_required(role="admin")
+@login_required()
 def ledgers_index():
 
     print("*** ledgers_index ***")
@@ -26,14 +26,35 @@ def ledgers_index():
 
     return render_template("ledgers/list.html",
         action = "NoAction",
+        userrole = current_user.get_role(),
         targetledger = -1,
         ledgerdocuments = ledgerdocuments)
+
+
+##
+## TÄMÄ REITTI, KUN HYVÄKSYTÄÄN TOSITE
+##
+@app.route("/ledgers/approve/<ledgerdocument_id>", methods=["GET", "POST"])
+@login_required(role="approver")
+def ledgers_approve(ledgerdocument_id):
+
+    if "approve_document" in request.form:
+        print("Yritetään hyväksyä")
+        ledgerdocument = LedgerDocument.query.filter(LedgerDocument.entity_id == current_user.get_entity_id(), LedgerDocument.id == ledgerdocument_id).first()
+        ledgerdocument.approved_by = current_user.get_username()
+        try:
+            db.session().commit()
+        except:
+            ## TÄHÄN VIRHETILANTEEN KÄSITTELY
+            pass
+        return redirect(url_for("ledgers_document", ledgerdocument_id = ledgerdocument_id))
+
 
 ##
 ## TÄMÄ REITTI, KUN NÄYTETÄÄN TALLENNETTU TOSITE
 ##
 @app.route("/ledgers/document/<ledgerdocument_id>", methods=["GET", "POST"])
-@login_required(role="admin")
+@login_required()
 def ledgers_document(ledgerdocument_id):
 
     print("*** ledgers_document ***")
@@ -49,6 +70,7 @@ def ledgers_document(ledgerdocument_id):
 
     return render_template("ledgers/document.html",
         action = "ShowLedgerDocument",
+        userrole = current_user.get_role(),
         ledgerdocumentform = ledgerdocumentform,
         documenttypes = documenttypes,
         accounts = accounts,
@@ -70,6 +92,7 @@ def ledgers_recordnew_document():
 
     return render_template("ledgers/document.html",
         action = "NewLedgerDocument",
+        userrole = current_user.get_role(),
         ledgerdocumentform = LedgerDocumentForm(),
         documenttypes = documenttypes)
 
@@ -130,6 +153,7 @@ def ledgers_edit_document(ledgerdocument_id):
 
         return render_template("ledgers/document.html",
         action = "EditLedgerDocument",
+        userrole = current_user.get_role(),
         ledgerdocumentform = editledgerdocumentform,
         documenttypes = documenttypes,
         accounts = accounts,
@@ -191,6 +215,7 @@ def ledgers_record_ledgerrow(ledgerdocument_id):
 
         return render_template("ledgers/document.html",
             action = "FixNewLedgerRow",
+            userrole = current_user.get_role(),
             ledgerdocumentform = ledgerdocumentform,
             documenttypes = documenttypes,
             accounts = accounts,
@@ -246,6 +271,7 @@ def ledgers_edit_ledgerrow(ledgerrow_id):
 
         return render_template("ledgers/document.html",
             action = "EditLedgerRow",
+            userrole = current_user.get_role(),
             targetledgerrow = ledgerrow_id,
             documenttypes = documenttypes,
             accounts = accounts,
@@ -309,6 +335,7 @@ def ledgers_select_ledgerrow(ledgerrow_id):
 
     return render_template("ledgers/document.html",
         action = "EditLedgerRow",
+        userrole = current_user.get_role(),
         targetledgerrow = ledgerrow_id,
         documenttypes = documenttypes,
         accounts = accounts,

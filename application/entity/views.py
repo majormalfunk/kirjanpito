@@ -6,18 +6,19 @@ from application.entity.models import Entity
 from application.entity.forms import EntityForm, EntityEditForm
 
 @app.route("/entity", methods=["GET"])
+@login_required(role="admin")
 def entity_index():
 
     print("Userin entity_id on " + str(current_user.get_entity_id()))
     return render_template("entity/edit.html", entity = Entity.query.get(current_user.get_entity_id()))
 
 @app.route("/entity/new/")
-##@login_required(role="admin")
+@login_required(role="admin")
 def entity_form():
     return render_template("entity/new.html", form = EntityForm())
 
 @app.route("/entity/select/", methods=["GET","POST"])
-##@login_required(role="admin")
+@login_required(role="admin")
 def entity_select_for_edit():
 
     print("Valittu editoitavaksi " + str(current_user.get_entity_id()))
@@ -31,7 +32,7 @@ def entity_select_for_edit():
     return render_template("entity/edit.html", form = form)
 
 @app.route("/entity/edit/", methods=["POST"])
-##@login_required(role="admin")
+@login_required(role="admin")
 def entity_edit():
 
     print("Yritetään tallentaa")
@@ -50,7 +51,7 @@ def entity_edit():
     return redirect(url_for("entity_select_for_edit"))
 
 @app.route("/entity/", methods=["POST"])
-##@login_required(role="admin")
+@login_required(role="admin")
 def entity_create():
     form = EntityForm(request.form)
 
