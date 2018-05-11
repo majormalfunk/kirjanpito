@@ -5,6 +5,10 @@
     Tervetuloa pit&auml;m&auml;&auml;n kirjaa!
   </p>
 
+{% if current_user.is_authenticated %}
+
+{% if current_user.get_role() == "admin" %}
+
   <p>
       Aloittaaksesi sinun pitää perustaa:
 
@@ -18,9 +22,20 @@
       </ul>
   </p>
 
+ {% else %}
+
   <p>
-      Ajan puutteen vuoksi sovelluksesta puuttuu kokonaan raportointi. Raportit muodostettaisiin
+    Hyväksyjän roolissa voit hyväksyä pääkäyttäjän tekemiä tositteita (Kohdassa Tositteet).
+    Hyväksyttyä tositetta ei voi enää muuttaa.
+  </p>
+
+ {% endif %}
+
+   <p>
+      Tässä vaiheessa sovelluksesta puuttuu vielä kokonaan raportointi. Raportit muodostettaisiin
       tiliryhmien, tilien, toimintojen ja kustannuspaikkojen avulla.    
   </p>
+
+  {% endif %}
   
 {% endblock %}

@@ -20,6 +20,7 @@
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('ledgers_index') }}">Tositteet</a>
             </li>
+            {% if current_user.get_role == "admin" %}
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('fiscalperiods_index') }}">Kaudet</a>
             </li>
@@ -38,6 +39,7 @@
             <li class="nav-item">
                 <a class="nav-link" href="{{ url_for('entity_select_for_edit')}}">Yhteis&ouml;</a>
             </li>
+            {% endif %}
           </ul>
           {% else %}
           <ul class="navbar-nav mr-auto">
