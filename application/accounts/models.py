@@ -8,6 +8,8 @@ class Account(Descriptive):
     accountgroup_id = db.Column(db.Integer, db.ForeignKey("account_group.id"), nullable = False)
     entity_id = db.Column(db.Integer, db.ForeignKey("entity.id"), nullable = False)
 
+    ledgerrows = db.relationship("LedgerRow", backref='account_ledgerrows', lazy=True)
+
     __table_args__ = (UniqueConstraint('number', 'entity_id', name='account_entity_uc'),)
 
     def __init__(self, number, name, description, inuse, accountgroup_id, entity_id):

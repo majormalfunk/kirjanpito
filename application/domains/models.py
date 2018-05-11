@@ -9,6 +9,8 @@ class Domain(Descriptive):
     entity_id = db.Column(db.Integer, db.ForeignKey("entity.id"), nullable = False)
     activity_id = db.Column(db.Integer, db.ForeignKey("activity.id"), nullable = False)
 
+    ledgerrows = db.relationship("LedgerRow", backref='domain_ledgerrows', lazy=True)
+
     __table_args__ = (UniqueConstraint('code', 'entity_id', name='domain_entity_uc'),)
 
     def __init__(self, orderer, code, name, description, inuse, activity_id, entity_id):

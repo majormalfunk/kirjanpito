@@ -22,6 +22,9 @@ class UserAccount(Base):
     def get_entity_id(self):
         return self.entity_id
 
+    def get_username(self):
+        return self.username
+
     def is_active(self):
         return True
 

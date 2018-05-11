@@ -12,6 +12,8 @@ class Entity(Base):
     accounts = db.relationship("Account", backref='entity_accounts', lazy=True)
     domains = db.relationship("Domain", backref='entity_domains', lazy=True)
     activities = db.relationship("Activity", backref='entity_activities', lazy=True)
+    ledgerdocuments = db.relationship("LedgerDocument", backref='entity_ledgerdocuments', lazy=True)
+    ledgerrows = db.relationship("LedgerRow", backref='entity_ledgerrows', lazy=True)
 
     def __init__(self, code, name, description):
         self.code = code

@@ -18,7 +18,10 @@
           {% if current_user.is_authenticated %}
           <ul class="navbar-nav mr-auto">
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('entity_select_for_edit')}}">Yhteis&ouml;</a>
+              <a class="nav-link" href="{{ url_for('ledgers_index') }}">Tositteet</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('fiscalperiods_index') }}">Kaudet</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('accountgroups_index') }}">Tilit</a>
@@ -27,12 +30,12 @@
               <a class="nav-link" href="{{ url_for('subjects_index') }}">Kohteet</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('fiscalperiods_index') }}">Kaudet</a>
+                <a class="nav-link" href="{{ url_for('documenttypes_index') }}">Tositelajit</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('documenttypes_index') }}">Tositelajit</a>
-              </li>
-            </ul>
+                <a class="nav-link" href="{{ url_for('entity_select_for_edit')}}">Yhteis&ouml;</a>
+            </li>
+          </ul>
           {% else %}
           <ul class="navbar-nav mr-auto">
               <li class="nav-item">

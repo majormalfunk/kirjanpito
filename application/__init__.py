@@ -83,6 +83,9 @@ from application.fiscalperiods import views
 # Ja kansion application/entity/ tiedostojen sisältö
 from application.entity import models
 from application.entity import views
+# Ja kansion application/ledgers/ tiedostojen sisältö
+from application.ledgers import models
+from application.ledgers import views
 
 from application.auth import models
 from application.auth import views

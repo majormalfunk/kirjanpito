@@ -1,0 +1,79 @@
+{% extends "layout.html" %}
+  
+{% block body %}
+{% if (action == "NewLedgerDocument") %}
+  <form method="POST" action="{{ url_for('ledgers_savenew_document') }}">
+{% else %}
+  <form method="POST" action="{{ url_for('ledgers_edit_document', ledgerdocument_id=ledgerdocumentform.id.data) }}">
+{% endif %}
+  <table>
+    <tr>
+      <td>
+        {{ ledgerdocumentform.documenttype_id.label }}
+      </td>
+      <td>
+          <select name="documenttype_id" id="documenttype_id">
+            {% for documenttype in documenttypes %}
+              <option value="{{ documenttype.id }}"
+                {% if (ledgerdocumentform.documenttype_id == documenttype.id) %} selected {% endif %}>
+                {{ documenttype.doctype }} {{ documenttype.name }}
+              </option>
+            {% endfor %}
+          </select>
+      </td>
+      {% if (action == "NewLedgerDocument") %}
+      <td colspan="6">&nbsp;</td>
+      {% else %}
+      <td>
+        {{ ledgerdocumentform.documentnumber.label }}
+      </td>
+      <td>
+        {{ ledgerdocumentform.documentnumber.data }}
+      </td>
+      <td>
+        {{ ledgerdocumentform.approved_by.label }}
+      </td>
+      <td>
+          {% if ledgerdocumentform.approved_by.data %}
+            {{ ledgerdocumentform.approved_by.data }}
+          {% else %}
+            &nbsp;
+          {% endif %}
+      </td>
+      <td>
+        {{ ledgerdocumentform.recorded_by.label }}
+      </td>
+      <td>
+          {% if ledgerdocumentform.recorded_by.data %}
+            {{ ledgerdocumentform.recorded_by.data }}
+          {% else %}
+            &nbsp;
+          {% endif %}
+      </td>
+      {% endif %}
+      </tr>
+    <tr>
+      <td>
+        {{ ledgerdocumentform.ledgerdate.label }}
+      </td>
+      <td>
+        {{ ledgerdocumentform.ledgerdate }}
+      </td>
+      <td>
+        {{ ledgerdocumentform.description.label }}
+      </td>
+      <td colspan="4">
+        {{ ledgerdocumentform.description }}
+      </td>
+      <td>
+        {% if (action == "NewLedgerDocument") %}
+          <input type="submit" value="Tallenna"/>
+        {% else %}
+          <input type="submit" name="action_update" value="Tallenna"/>
+          <input type="submit" name="action_delete" value="Poista"/>
+        {% endif %}
+      </td>
+    </tr>
+  </table>
+</form>
+{% endblock %}

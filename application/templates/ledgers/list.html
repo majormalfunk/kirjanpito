@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<div>
+  <table class="container-fluid">
+    <tr>
+      <th>Täsm.</th>
+      <th>Tark.</th>
+      <th>Päiväys</th>
+      <th>Laji</th>
+      <th>Nro</th>
+      <th>Selite</th>
+      <th>&nbsp;</th>
+      <th>
+          <form method="POST" action="{{ url_for('ledgers_recordnew_document') }}">
+            <input class="btn btn-primary" type="submit" value="&#x2b;"/>
+          </form>
+      </th>
+    </tr>
+
+    {% for ag in ledgerdocuments %}
+
+        {# TOSITE ALKAA #}
+
+        <form method="POST" action="{{ url_for('ledgers_document', ledgerdocument_id=ag.id) }}">
+          <tr>
+            <td></td>
+            {% if ag.approved_by %}
+              <td class="text-success">&#x2713;</td>
+            {% else %}
+              <td>&nbsp;</td>
+            {% endif %}
+            <td>{{ ag.ledgerdate }}</td>
+            <td>{{ ag.doctype }}</td>
+            <td>{{ ag.documentnumber }}</td>
+            <td>{{ ag.description }}</td>
+            <td>
+                <input type="submit" value="Muuta"/>
+            </td>
+            <td>&nbsp;</td>
+          </tr>
+        </form>
+        
+        {# TOSITE LOPPUU #}
+
+
+
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}
