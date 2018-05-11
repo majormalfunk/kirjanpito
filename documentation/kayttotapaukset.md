@@ -1,22 +1,23 @@
 Käyttötapaukset
 
-Käyttötapauksista puuttuu vielä tositteiden hyväksyntä ja tarkastaminen kuten tietokantakuvauksestakin.
-
 1) Lähtötietojen perustaminen
 
 Käyttöönoton aluksi tallennetaan lähtötiedot:
 - kirjanpidon tiliryhmät (account group)
 - kirjanpidon tilit (account)
-- kirjanpidon raporttipohjat (tuloslaskelmat, taseet, muut ei tapahtumaluettelomuotoiset raporttipohjat)
 - tositelajit (document type)
-- kustannuspaikat (domain)
 - aktiviteetit (activity)
+- kustannuspaikat (domain)
+
+Näissä toteutus on sqlalchemyllä.
 
 2) Uuden tilikauden perustaminen
 
 Perustietojen ollessa kunnossa perustetaan tilikausi:
 - tilikausi (fiscal year)
 - tilikauden jaksot eli käytännössä kuukaudet (fiscal period)
+
+Tilikauden perustaminen luo myös jaksot.
 
 3) Tositteiden tallentaminen
 
